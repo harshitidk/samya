@@ -1,0 +1,249 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Aurora from '../../components/Aurora.astro';
+import Icon from '../../components/Icon.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Testimonial from '../../components/Testimonial.astro';
+import { services, type Service } from '../../data/services';
+import { testimonials } from '../../data/content';
+import { site, whatsappHref } from '../../config/site';
+
+export function getStaticPaths() {
+  return services.map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+
+const { s } = Astro.props as { s: Service };
+const t = s.theme;
+const idx = services.findIndex((x) => x.slug === s.slug);
+const others = [...services.slice(idx + 1), ...services.slice(0, idx)];
+const testimonial = s.testimonial ? testimonials[s.testimonial] : null;
+const auraColors = [t.a, t.b, t.c, t.a, t.b];
+const waText = `Hi ${site.practitioner}, I’m reaching out about ${s.title.toLowerCase()}.`;
+
+---
+
+<Base title={s.title} description={`${s.title} with ${site.practitioner} at Samya. ${s.tagline}`}>
+  <div style={`--a:${t.a};--b:${t.b};--c:${t.c};--acc:${t.accent};--tink:${t.ink}`}>
+    <!-- ================= HERO ================= -->
+    <section class="s-hero">
+      <Aurora colors={auraColors} intensity={1.1} />
+      <div class="wrap s-hero-grid">
+        <div class="s-copy">
+          <nav class="crumbs reveal" aria-label="Breadcrumb">
+            <a href="/services">Services</a><span aria-hidden="true">/</span><span aria-current="page">{s.short}</span>
+          </nav>
+          <h1 class="h1 reveal" style="--d:60ms">{s.title}</h1>
+          <p class="s-tagline reveal" style="--d:120ms">{s.tagline}</p>
+          <div class="s-ctas reveal" style="--d:180ms">
+            <a href={`/contact?service=${s.slug}`} class="btn btn-primary">Book a session <Icon name="arrow" /></a>
+            <a href={whatsappHref(waText)} class="btn btn-glass" target="_blank" rel="noopener"><Icon name="whatsapp" />Ask a question</a>
+          </div>
+        </div>
+        <div class="s-visual reveal" style="--d:140ms">
+          <div class="arch s-arch">
+            <Image src={s.photo} alt={s.photoAlt} widths={[420, 720, 1000]} sizes="(min-width: 64rem) 30vw, 80vw" class="photo-fill" loading="eager" />
+          </div>
+          <div class="s-round">
+            <Image src={s.photo2} alt={s.photo2Alt} widths={[240, 420]} sizes="12rem" class="photo-fill" loading="eager" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= INTRO ================= -->
+    <section class="section intro">
+      <div class="wrap intro-grid">
+        <p class="intro-big reveal">{s.intro}</p>
+      </div>
+    </section>
+
+    <!-- ================= LIST ================= -->
+    <section class="section-tight list-section">
+      <div class="wrap">
+        <div class="list-card grain">
+          <div class="list-head">
+            <h2 class="h2 reveal">{s.listHeading}</h2>
+          </div>
+          <ul class="items">
+            {s.list.map((item, i) => (
+              <li class="reveal" style={`--d:${i * 50}ms`}>
+                <span class="tick"><Icon name="check" /></span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= AIM ================= -->
+    <section class="section aim">
+      <div class="wrap-narrow">
+        <span class="aim-orb" aria-hidden="true"></span>
+        <p class="aim-text reveal">{s.aim}</p>
+        <p class="aim-sig reveal">{site.practitioner}</p>
+      </div>
+    </section>
+
+    <!-- ================= EXTRAS ================= -->
+    {s.extras && (
+      <section class="section-tight">
+        <div class="wrap extras">
+          {s.extras.map((e, i) => (
+            <article class="extra reveal" style={`--d:${i * 100}ms`}>
+              <span class="extra-icon"><Icon name={e.icon} /></span>
+              <h3 class="h3">{e.title}</h3>
+              <p class="muted">{e.body}</p>
+              {e.icon === 'circle' && s.slug === 'grief-counselling' && (
+                <a href="/grief-circle" class="link-arrow">About the Grief Circle <Icon name="arrow" /></a>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ================= TESTIMONIAL ================= -->
+    {testimonial && (
+      <section class="section-tight">
+        <div class="wrap-narrow">
+          <Testimonial t={testimonial} size="lg" class="reveal s-tm" />
+        </div>
+      </section>
+    )}
+
+
+    <!-- ================= OTHER SERVICES ================= -->
+    <section class="section-tight others-section">
+      <div class="wrap">
+        <div class="others-head">
+          <h2 class="h3">Other ways I can help</h2>
+          <a href="/services" class="link-arrow">All services <Icon name="arrow" /></a>
+        </div>
+      </div>
+      <ul class="others" role="list">
+        {others.map((o) => (
+          <li style={`--oa:${o.theme.a};--ob:${o.theme.b};--oc:${o.theme.c}`}>
+            <a href={`/services/${o.slug}`} class="other">
+              <span class="other-img"><Image src={o.photo} alt="" widths={[360, 560]} sizes="18rem" class="photo-fill" /></span>
+              <strong>{o.title}</strong>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <CtaBand
+      service={s.slug}
+      colors={auraColors}
+      title={`Ready when <em>you are.</em>`}
+    />
+  </div>
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .s-hero {
+    position: relative; overflow: hidden; isolation: isolate;
+    padding: clamp(7.5rem, 13vw, 9.5rem) 0 clamp(4rem, 8vw, 6rem);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--a) 45%, white), color-mix(in srgb, var(--b) 35%, white) 60%, var(--bg));
+  }
+  .s-hero::after { content: ''; position: absolute; inset: auto 0 0; height: 25%; background: linear-gradient(transparent, var(--bg)); }
+  .s-hero-grid { position: relative; z-index: 1; display: grid; gap: 3rem; align-items: center; }
+  .s-copy { display: grid; gap: 1.4rem; justify-items: start; }
+  .crumbs { display: flex; gap: .5rem; font-size: .875rem; font-weight: 500; color: var(--ink-2); }
+  .crumbs a { color: var(--acc); text-decoration: none; }
+  .crumbs a:hover { text-decoration: underline; }
+  .s-copy .h1 { max-width: 13ch; color: var(--tink); }
+  .s-tagline { font-family: var(--font-display); font-style: italic; font-size: clamp(1.5rem, 2.6vw, 2.1rem); line-height: 1.25; color: var(--tink); max-width: 26ch; }
+  .s-ctas { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .5rem; }
+
+  .s-visual { position: relative; width: min(100%, 27rem); justify-self: center; padding-bottom: 2rem; }
+  .s-arch { aspect-ratio: 4 / 5; box-shadow: 0 40px 80px -40px color-mix(in srgb, var(--acc) 70%, transparent); }
+  .s-round {
+    position: absolute; left: -1.5rem; bottom: 0; width: clamp(8rem, 30%, 11rem); aspect-ratio: 1;
+    border-radius: 50%; overflow: hidden; border: 6px solid rgba(255,255,255,.9);
+    box-shadow: var(--shadow-lift);
+    animation: float 8s var(--ease-breath) infinite;
+  }
+  @media (min-width: 64rem) {
+    .s-hero-grid { grid-template-columns: 1.15fr .85fr; }
+    .s-visual { justify-self: end; }
+  }
+
+  /* ---------- Intro ---------- */
+  .intro-grid { display: grid; max-width: 52rem; }
+  .intro-big { font-family: var(--font-display); font-size: clamp(1.75rem, 3.2vw, 2.75rem); line-height: 1.2; letter-spacing: -.01em; color: var(--ink); }
+  .intro-rest { display: grid; gap: 1.25rem; align-content: end; }
+  
+
+  /* ---------- List ---------- */
+  .list-card {
+    position: relative; overflow: hidden;
+    border-radius: clamp(2rem, 4vw, 3rem);
+    padding: clamp(2rem, 5vw, 4rem);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--a) 55%, white), color-mix(in srgb, var(--b) 45%, white) 55%, color-mix(in srgb, var(--c) 55%, white));
+    display: grid; gap: 2.5rem;
+  }
+  .list-head { display: grid; gap: .75rem; align-content: start; }
+  .list-head .eyebrow { color: var(--acc); }
+  .items { list-style: none; display: grid; gap: .75rem; }
+  .items li {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1.1rem 1.25rem; border-radius: 1.25rem;
+    background: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.95);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    font-weight: 500; line-height: 1.5;
+  }
+  .tick { flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%; display: grid; place-items: center; background: var(--acc); color: #fff; margin-top: .05rem; }
+  .tick :global(svg) { width: 1rem; height: 1rem; }
+  @media (min-width: 60rem) {
+    .list-card { grid-template-columns: .8fr 1.2fr; gap: 4rem; }
+    .list-head { position: sticky; top: 7rem; }
+  }
+
+  /* ---------- Aim ---------- */
+  .aim { text-align: center; }
+  .aim .wrap-narrow { display: grid; justify-items: center; gap: 1.5rem; }
+  .aim-orb { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, var(--a) 45%, var(--b)); box-shadow: 0 0 50px 10px color-mix(in srgb, var(--a) 70%, transparent); animation: float 7s var(--ease-breath) infinite; }
+  .aim-text { font-family: var(--font-display); font-size: clamp(1.9rem, 4vw, 3.25rem); line-height: 1.15; letter-spacing: -.015em; color: var(--tink); text-wrap: balance; }
+  .aim-sig { font-family: var(--font-display); font-style: italic; font-size: 1.5rem; color: var(--acc); }
+  .aim-sig::before { content: '— '; }
+
+  /* ---------- Extras ---------- */
+  .extras { display: grid; gap: 1rem; }
+  .extra { display: grid; gap: .9rem; align-content: start; padding: clamp(1.75rem, 3.5vw, 2.5rem); border-radius: var(--r-card); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-soft); }
+  .extra-icon { width: 3.25rem; height: 3.25rem; border-radius: 1rem; display: grid; place-items: center; background: linear-gradient(135deg, var(--a), var(--b)); color: var(--acc); }
+  .extra-icon :global(svg) { width: 1.5rem; height: 1.5rem; }
+  .extra .link-arrow { color: var(--acc); }
+  @media (min-width: 56rem) { .extras { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); } }
+
+  :global(.s-tm) { background: linear-gradient(135deg, color-mix(in srgb, var(--a) 35%, white), color-mix(in srgb, var(--b) 30%, white)) !important; border: 0 !important; }
+
+  /* ---------- Practical ---------- */
+  .practical { list-style: none; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+  .practical li { display: grid; gap: .5rem; align-content: start; padding: 1.5rem; border-radius: var(--r-card); background: var(--surface); border: 1px solid var(--line); }
+  .pr-icon { width: 2.75rem; height: 2.75rem; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--a) 60%, white); color: var(--acc); margin-bottom: .5rem; }
+  .pr-icon :global(svg) { width: 1.3rem; height: 1.3rem; }
+
+  /* ---------- Others: a sideways track ---------- */
+  .others-head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 1.5rem; }
+  .others {
+    list-style: none; display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: .5rem max(var(--gutter), calc((100vw - var(--max-w)) / 2)) 1.5rem;
+    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--max-w)) / 2));
+    scrollbar-width: thin;
+  }
+  .others li { flex: 0 0 min(18rem, 78vw); scroll-snap-align: start; }
+  .other {
+    display: grid; gap: .5rem; height: 100%; padding: .75rem .75rem 1.25rem;
+    border-radius: var(--r-card); text-decoration: none;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--oa) 45%, white), color-mix(in srgb, var(--ob) 35%, white));
+    transition: transform .4s var(--ease-out);
+  }
+  .other:hover { transform: translateY(-4px); }
+  .other strong { padding: .5rem .5rem 0; font-family: var(--font-display); font-weight: 400; font-size: 1.4rem; line-height: 1.15; }
+  .other .small { padding: 0 .5rem; }
+  .other-img { display: block; aspect-ratio: 16 / 10; border-radius: 1.2rem; overflow: hidden; }
+</style>

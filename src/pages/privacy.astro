@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../config/site';
+---
+
+<Base title="Your privacy" description="How Samya handles what you share. No tracking, no selling, nothing stored beyond getting back to you.">
+  <section class="p-wrap">
+    <article class="wrap-narrow reading">
+      <p class="eyebrow">Privacy</p>
+      <h1 class="h1">Your privacy</h1>
+      <p class="first">
+        This site doesn’t track you across the web or sell anything about you. If you send a note, only {site.practitioner}
+        reads it, and it’s used only to get back to you. Counselling conversations are confidential, within the safety
+        limits explained in your first conversation.
+      </p>
+      <h2 class="h3">What this site collects</h2>
+      <p>Nothing, unless you send a note. There are no advertising trackers, no social pixels and no analytics cookies, so there is no cookie banner to dismiss.</p>
+      <h2 class="h3">If you use the booking form</h2>
+      <p>What you enter is either sent straight to {site.practitioner}, or written into a WhatsApp message on your own device that you choose whether to send. It is not kept in a database on this website, and it is used only to reply to you.</p>
+      <h2 class="h3">The breathing and grounding tools</h2>
+      <p>These run entirely in your browser. Nothing you choose or do on those pages is recorded or sent anywhere.</p>
+      <h2 class="h3">What we talk about</h2>
+      <p>Counselling conversations are confidential. What you share stays between you and {site.practitioner}, within the standard limits of safety. No session notes or health records are stored on this website.</p>
+      <h2 class="h3">Your choices</h2>
+      <p>You can ask what is held about you, ask for it to be corrected, or ask for it to be deleted. Write to <a class="link-inline" href={`mailto:${site.email}`}>{site.email}</a>.</p>
+      <!-- PLACEHOLDER: full policy still needs legal review against India’s DPDP Act, 2023. -->
+      <p class="note small">A fuller policy, reviewed against India’s Digital Personal Data Protection Act, 2023, will replace this page before launch.</p>
+    </article>
+  </section>
+</Base>
+
+<style>
+  .p-wrap { padding: clamp(8rem, 14vw, 10rem) 0 var(--section-y); background: var(--g-soft); }
+  .reading { display: grid; gap: 1.1rem; max-width: 44rem; }
+  .reading .h1 { margin-bottom: .5rem; }
+  .reading h2 { margin-top: 1.5rem; }
+  .reading p { color: var(--ink-2); }
+  .first { font-size: var(--fs-lead); color: var(--ink) !important; }
+  .note { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+</style>

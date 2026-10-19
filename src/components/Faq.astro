@@ -1,0 +1,45 @@
+---
+import Icon from './Icon.astro';
+interface Props { items: readonly { q: string; a: string }[]; class?: string }
+const { items, class: cls = '' } = Astro.props;
+---
+<div class:list={['faq', cls]}>
+  {items.map((f) => (
+    <details class="faq-item" data-faq data-q={f.q.toLowerCase() + ' ' + f.a.toLowerCase()}>
+      <summary>
+        <span class="q">{f.q}</span>
+        <span class="toggle" aria-hidden="true"><Icon name="plus" /></span>
+      </summary>
+      <div class="a"><p>{f.a}</p></div>
+    </details>
+  ))}
+</div>
+
+<style>
+  .faq { display: grid; gap: .75rem; }
+  .faq-item {
+    border-radius: 1.4rem; background: var(--surface);
+    border: 1px solid var(--line);
+    transition: box-shadow .3s, border-color .3s, background .3s;
+  }
+  .faq-item[open] { box-shadow: var(--shadow-soft); border-color: rgba(45,106,95,.18); }
+  summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 1.2rem 1.25rem 1.2rem 1.5rem;
+    font-weight: 500; font-size: 1.0625rem; line-height: 1.4;
+    border-radius: 1.4rem;
+  }
+  summary::-webkit-details-marker { display: none; }
+  .toggle {
+    flex: none; width: 2.25rem; height: 2.25rem; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--bg-2); color: var(--violet-deep);
+    transition: transform .4s var(--ease-out), background .3s, color .3s;
+  }
+  .toggle :global(svg) { width: 1.1rem; height: 1.1rem; }
+  .faq-item[open] .toggle { transform: rotate(45deg); background: var(--g-cta); color: #fff; }
+  .a { padding: 0 1.5rem 1.4rem; color: var(--ink-2); max-width: 46rem; }
+  .faq-item[open] .a { animation: faq-in .45s var(--ease-out); }
+  @keyframes faq-in { from { opacity: 0; transform: translateY(-6px); } }
+</style>

@@ -1,0 +1,264 @@
+---
+import Base from '../layouts/Base.astro';
+import Aurora from '../components/Aurora.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+
+const patterns = [
+  { id: 'calm', name: 'Calm', hint: 'In 4 · Out 6', phases: [['Breathe in', 4], ['Breathe out', 6]] },
+  { id: 'box', name: 'Box', hint: 'In 4 · Hold 4 · Out 4 · Hold 4', phases: [['Breathe in', 4], ['Hold', 4], ['Breathe out', 4], ['Hold', 4]] },
+  { id: '478', name: '4-7-8', hint: 'In 4 · Hold 7 · Out 8', phases: [['Breathe in', 4], ['Hold', 7], ['Breathe out', 8]] },
+];
+const grounding = [
+  { n: 5, sense: 'see', prompt: 'Look around. Name five things you can see. A colour, a shape, the light on a wall.' },
+  { n: 4, sense: 'feel', prompt: 'Notice four things you can feel. Your feet on the floor, the fabric on your skin, the air.' },
+  { n: 3, sense: 'hear', prompt: 'Listen for three sounds. Near or far, loud or barely there.' },
+  { n: 2, sense: 'smell', prompt: 'Find two things you can smell, or remember two scents you love.' },
+  { n: 1, sense: 'taste', prompt: 'Notice one thing you can taste. Then take one slow breath.' },
+];
+---
+
+<Base title="A moment to breathe" description="A free, gentle breathing companion and a 5-4-3-2-1 grounding exercise from Samya. Take a minute, just for you.">
+  <section class="br-hero" data-breathe-app>
+    <Aurora colors={['#C9E7DE', '#F9D8CB', '#C9EFE4', '#DCE8F4', '#FFE0C9']} intensity={1.15} />
+    <div class="wrap br-inner">
+      <div class="br-head">
+        <h1 class="h1 reveal" style="--d:60ms">Slow down. <em class="grad-text">Just this breath.</em></h1>
+        <p class="lead reveal" style="--d:120ms">Choose a rhythm, press start, follow the light.</p>
+      </div>
+
+      <div class="br-tool reveal" style="--d:180ms">
+        <div class="patterns" role="radiogroup" aria-label="Breathing pattern">
+          {patterns.map((p, i) => (
+            <button type="button" role="radio" class="pat" aria-checked={i === 0 ? 'true' : 'false'} data-pattern={JSON.stringify(p.phases)}>
+              <strong>{p.name}</strong><small>{p.hint}</small>
+            </button>
+          ))}
+        </div>
+
+        <div class="orb-stage">
+          <svg class="progress" viewBox="0 0 200 200" aria-hidden="true">
+            <defs>
+              <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2D6A5F" /><stop offset=".5" stop-color="#2F6074" /><stop offset="1" stop-color="#C0664D" /></linearGradient>
+            </defs>
+            <circle cx="100" cy="100" r="96" class="track-c" />
+            <circle cx="100" cy="100" r="96" class="bar-c" pathLength="1" data-progress />
+          </svg>
+          <span class="halo-a" aria-hidden="true"></span>
+          <span class="big-orb" data-big-orb aria-hidden="true"></span>
+          <div class="readout" aria-live="polite">
+            <span class="phase" data-phase>Ready</span>
+            <span class="count" data-count></span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <label class="dur">
+            <span class="sr-only">Duration</span>
+            <select data-duration>
+              <option value="60">1 minute</option>
+              <option value="180" selected>3 minutes</option>
+              <option value="300">5 minutes</option>
+            </select>
+          </label>
+          <button class="btn btn-primary" data-start><span data-start-label>Start</span></button>
+          <button class="btn btn-glass" data-reset>Reset</button>
+        </div>
+        <p class="done small" data-done hidden>Well done. Notice how you feel right now, without needing to change it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap ground-grid" data-ground>
+      <div class="ground-copy">
+        <h2 class="h2 reveal">The <em class="grad-text nowrap">5-4-3-2-1</em> grounding exercise</h2>
+        <p class="lead reveal">For when your mind is racing.</p>
+        <ol class="dots" aria-hidden="true">
+          {grounding.map((_, i) => <li data-dot={i} class:list={{ on: i === 0 }}></li>)}
+        </ol>
+      </div>
+      <div class="ground-card reveal" aria-live="polite">
+        {grounding.map((g, i) => (
+          <div class="g-step" data-step={i} hidden={i !== 0}>
+            <span class="g-num">{g.n}</span>
+            <p class="g-sense">things you can <em>{g.sense}</em></p>
+            <p class="g-prompt">{g.prompt}</p>
+          </div>
+        ))}
+        <div class="g-step" data-step={grounding.length} hidden>
+          <span class="g-num g-heart"><Icon name="heart" /></span>
+          <p class="g-sense">You’re <em>here.</em></p>
+          <p class="g-prompt">Take a moment to notice how your body feels now. If today feels heavy, you don’t have to hold it alone.</p>
+          <a href="/contact" class="link-arrow">Talk to {site.practitioner} <Icon name="arrow" /></a>
+        </div>
+        <div class="g-nav">
+          <button class="btn btn-ghost btn-sm" data-g-prev disabled><Icon name="arrow-left" />Back</button>
+          <button class="btn btn-primary btn-sm" data-g-next>Next <Icon name="arrow" /></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="wrap-narrow">
+      <div class="note reveal">
+        <span class="note-icon"><Icon name="lifebuoy" /></span>
+        <p>
+          If it keeps coming back, <a href="/services/anxiety-stress-counselling" class="link-inline">counselling can help</a>.
+          In crisis? Call {site.crisis.serviceName} on <a href={`tel:${site.crisis.numbers[0]}`} class="link-inline">{site.crisis.numbers[0]}</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .br-hero { position: relative; overflow: hidden; isolation: isolate; background: #F1F7F4; padding: clamp(7.5rem, 13vw, 9rem) 0 clamp(3.5rem, 7vw, 5rem); }
+  .br-inner { position: relative; z-index: 1; display: grid; gap: 3rem; align-items: center; }
+  .br-head { display: grid; gap: 1.25rem; }
+  .br-head .h1 { max-width: 12ch; }
+  .br-tool { display: grid; justify-items: center; gap: 1.75rem; padding: clamp(1.25rem, 3vw, 2rem); border-radius: 2.5rem; background: rgba(255,255,255,.45); border: 1px solid rgba(255,255,255,.9); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: var(--shadow-lift); }
+  .patterns { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; width: 100%; padding: .35rem; border-radius: 1.4rem; background: rgba(255,255,255,.6); }
+  .pat { display: grid; gap: .1rem; padding: .7rem .5rem; border-radius: 1.1rem; border: 0; background: transparent; text-align: center; transition: background .3s, box-shadow .3s; }
+  .pat strong { font-size: .9375rem; }
+  .pat small { font-size: .6875rem; color: var(--ink-3); line-height: 1.3; }
+  .pat[aria-checked='true'] { background: #fff; box-shadow: var(--shadow-soft); }
+
+  .orb-stage { position: relative; width: min(22rem, 76vw); aspect-ratio: 1; display: grid; place-items: center; }
+  .progress { position: absolute; inset: 0; transform: rotate(-90deg); }
+  .track-c { fill: none; stroke: rgba(255,255,255,.8); stroke-width: 3; }
+  .bar-c { fill: none; stroke: url(#pg); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1s linear; }
+  .halo-a { position: absolute; inset: 10%; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.6), transparent 70%); }
+  .big-orb {
+    position: absolute; inset: 20%; border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #fff 0%, #E3F2EC 20%, #9FD3C5 50%, #F2B49E 82%, #F9D2BF 100%);
+    box-shadow: 0 0 80px 20px rgba(159, 211, 197, .55), inset -14px -18px 40px rgba(192, 102, 77, .25);
+    transform: scale(.7);
+    transition: transform 4s var(--ease-breath), filter 1s;
+  }
+  .readout { position: relative; z-index: 1; display: grid; justify-items: center; text-shadow: 0 1px 16px rgba(255,255,255,.9); }
+  .phase { font-family: var(--font-display); font-size: clamp(1.75rem, 4vw, 2.4rem); line-height: 1.1; }
+  .count { font-weight: 500; font-size: 1.1rem; color: var(--ink-2); min-height: 1.6rem; font-variant-numeric: tabular-nums; }
+
+  .controls { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; }
+  .dur select {
+    appearance: none; height: 3.25rem; padding: 0 2.5rem 0 1.25rem; border-radius: var(--r-pill);
+    border: 1px solid #fff; background: rgba(255,255,255,.75) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%231D1A3B' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 1rem center / .8rem;
+    font-weight: 500;
+  }
+  .done { text-align: center; color: var(--violet-deep); font-weight: 500; max-width: 26rem; }
+  @media (min-width: 64rem) { .br-inner { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+
+  .ground-grid { display: grid; gap: 2.5rem; align-items: center; }
+  .ground-copy { display: grid; gap: 1.25rem; }
+  .nowrap { white-space: nowrap; }
+  .dots { list-style: none; display: flex; gap: .5rem; }
+  .dots li { width: 2rem; height: .4rem; border-radius: 1rem; background: var(--line-strong); transition: background .4s, width .4s var(--ease-out); }
+  .dots li.on { background: var(--violet); width: 3rem; }
+  .ground-card { position: relative; display: grid; gap: 1.5rem; min-height: 24rem; padding: clamp(2rem, 5vw, 3rem); border-radius: 2rem; background: var(--g-dawn); align-content: space-between; }
+  .g-step { display: grid; gap: .75rem; justify-items: start; animation: fr-in .5s var(--ease-out); }
+  .g-num { font-family: var(--font-display); font-size: clamp(5rem, 12vw, 8rem); line-height: .9; background: var(--g-text); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .1em; }
+  .g-heart { width: 5rem; height: 5rem; border-radius: 50%; display: grid; place-items: center; background: var(--g-cta); color: #fff; padding: 0; }
+  .g-heart :global(svg) { width: 2.2rem; height: 2.2rem; }
+  .g-sense { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.25rem); line-height: 1.1; }
+  .g-sense em { color: var(--violet-deep); }
+  .g-prompt { color: var(--ink-2); font-size: 1.0625rem; max-width: 30rem; }
+  .g-nav { display: flex; justify-content: space-between; gap: .75rem; }
+  .g-nav .btn:disabled { opacity: .4; pointer-events: none; }
+  @keyframes fr-in { from { opacity: 0; transform: translateY(10px); } }
+  @media (min-width: 60rem) { .ground-grid { grid-template-columns: 1fr 1fr; gap: 5rem; } }
+
+  .note { display: flex; gap: 1rem; align-items: flex-start; padding: 1.5rem; border-radius: 1.5rem; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
+  .note-icon { flex: none; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: grid; place-items: center; background: var(--g-dawn); color: var(--violet-deep); }
+</style>
+
+<script>
+  function initBreathe() {
+    const app = document.querySelector<HTMLElement>('[data-breathe-app]');
+    if (app && !app.dataset.ready) {
+      app.dataset.ready = '1';
+      const orb = app.querySelector<HTMLElement>('[data-big-orb]')!;
+      const phaseEl = app.querySelector<HTMLElement>('[data-phase]')!;
+      const countEl = app.querySelector<HTMLElement>('[data-count]')!;
+      const prog = app.querySelector<SVGCircleElement>('[data-progress]')!;
+      const startBtn = app.querySelector<HTMLButtonElement>('[data-start]')!;
+      const startLabel = app.querySelector<HTMLElement>('[data-start-label]')!;
+      const resetBtn = app.querySelector<HTMLButtonElement>('[data-reset]')!;
+      const durSel = app.querySelector<HTMLSelectElement>('[data-duration]')!;
+      const done = app.querySelector<HTMLElement>('[data-done]')!;
+      const pats = app.querySelectorAll<HTMLButtonElement>('[data-pattern]');
+
+      let phases: [string, number][] = JSON.parse(pats[0].dataset.pattern!);
+      let running = false, pi = 0, left = 0, elapsed = 0, tick: number | undefined;
+
+      const scaleFor = (label: string, prev: number) => (label === 'Breathe in' ? 1.15 : label === 'Breathe out' ? 0.7 : prev);
+      let scale = 0.7;
+
+      const enter = (i: number) => {
+        pi = i % phases.length;
+        const [label, secs] = phases[pi];
+        left = secs;
+        phaseEl.textContent = label;
+        countEl.textContent = String(left);
+        scale = scaleFor(label, scale);
+        orb.style.transitionDuration = `${secs}s`;
+        orb.style.transform = `scale(${scale})`;
+        orb.style.filter = label === 'Hold' ? 'saturate(1.25) brightness(1.04)' : 'none';
+        if ('vibrate' in navigator && running) navigator.vibrate?.(30);
+      };
+      const step = () => {
+        elapsed += 1; left -= 1;
+        const total = Number(durSel.value);
+        prog.style.strokeDashoffset = String(Math.max(0, 1 - elapsed / total));
+        if (elapsed >= total && phases[pi][0] === 'Breathe out' && left <= 0) return finish();
+        if (elapsed >= total + 20) return finish();
+        if (left <= 0) enter(pi + 1); else countEl.textContent = String(left);
+      };
+      const finish = () => {
+        pause(); phaseEl.textContent = 'Well done'; countEl.textContent = '';
+        orb.style.transitionDuration = '2s'; orb.style.transform = 'scale(.85)';
+        done.hidden = false; startLabel.textContent = 'Again'; elapsed = 0;
+      };
+      const pause = () => { running = false; clearInterval(tick); startLabel.textContent = 'Resume'; };
+      const start = () => {
+        done.hidden = true; running = true; startLabel.textContent = 'Pause';
+        if (elapsed === 0) { prog.style.strokeDashoffset = '1'; enter(0); } else enter(pi);
+        tick = window.setInterval(step, 1000);
+      };
+      const reset = () => {
+        pause(); elapsed = 0; pi = 0; startLabel.textContent = 'Start';
+        phaseEl.textContent = 'Ready'; countEl.textContent = ''; done.hidden = true;
+        prog.style.strokeDashoffset = '1'; orb.style.transitionDuration = '1s'; orb.style.transform = 'scale(.7)'; scale = 0.7;
+      };
+      startBtn.addEventListener('click', () => (running ? pause() : start()));
+      resetBtn.addEventListener('click', reset);
+      durSel.addEventListener('change', reset);
+      pats.forEach((b) => b.addEventListener('click', () => {
+        pats.forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+        phases = JSON.parse(b.dataset.pattern!);
+        reset();
+      }));
+      document.addEventListener('astro:before-swap', () => clearInterval(tick), { once: true });
+    }
+
+    const g = document.querySelector<HTMLElement>('[data-ground]');
+    if (g && !g.dataset.ready) {
+      g.dataset.ready = '1';
+      const steps = g.querySelectorAll<HTMLElement>('[data-step]');
+      const dots = g.querySelectorAll<HTMLElement>('[data-dot]');
+      const prev = g.querySelector<HTMLButtonElement>('[data-g-prev]')!;
+      const next = g.querySelector<HTMLButtonElement>('[data-g-next]')!;
+      let i = 0;
+      const show = () => {
+        steps.forEach((s, k) => (s.hidden = k !== i));
+        dots.forEach((d, k) => d.classList.toggle('on', k <= i));
+        prev.disabled = i === 0;
+        next.hidden = i === steps.length - 1;
+      };
+      prev.addEventListener('click', () => { i = Math.max(0, i - 1); show(); });
+      next.addEventListener('click', () => { i = Math.min(steps.length - 1, i + 1); show(); });
+    }
+  }
+  document.addEventListener('astro:page-load', initBreathe);
+</script>

@@ -1,0 +1,542 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Aurora from '../components/Aurora.astro';
+import Icon from '../components/Icon.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Testimonial from '../components/Testimonial.astro';
+import BreathOrb from '../components/BreathOrb.astro';
+import { services, feelings } from '../data/services';
+import { testimonialList, promises, steps, faqGroups, testimonials } from '../data/content';
+import { site } from '../config/site';
+
+import heroPortrait from '../assets/photos/gitanjali-portrait.jpg';
+import tea from '../assets/photos/gitanjali-session.jpg';
+import circleSky from '../assets/photos/hands-stack.jpg';
+
+const faqPreview = [faqGroups[0].items[0], faqGroups[1].items[0], faqGroups[2].items[0], faqGroups[1].items[3]];
+const marquee = ['Grief & loss', 'Family therapy', 'Children & teens', 'Anxiety & stress', 'Anger & emotions', 'Life transitions', 'Estrangement', 'Separation & divorce', 'Chronic illness', 'Self-esteem & identity'];
+
+/* Bento placement on the six-column grid, in service order. */
+const spans = ['s4', 's2', 's2', 's4', 's3', 's3'];
+const serviceIcons = ['feather', 'child', 'users', 'compass', 'wave', 'wind'];
+
+const finderData = Object.fromEntries(
+  services.map((s) => [s.slug, { title: s.title, tagline: s.tagline, teaser: s.teaser, theme: s.theme }]),
+);
+---
+
+<Base
+  title="Samya · Counselling & Family Therapy with Gitanjali"
+  description="Counselling, family therapy and grief counselling with Gitanjali. A compassionate, affordable space to be heard, beyond labels or diagnoses. Online and in person."
+>
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <Aurora />
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1 class="display reveal">
+          A gentle space to find your <em class="grad-text">balance</em> again.
+        </h1>
+        <p class="lead reveal" style="--d:160ms">
+          Counselling, family therapy and grief support with {site.practitioner}.
+        </p>
+        <div class="hero-ctas reveal" style="--d:240ms">
+          <a href="/contact" class="btn btn-primary">Book a session <Icon name="arrow" /></a>
+          <a href="#finder" class="btn btn-glass">What’s on your mind?</a>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal" style="--d:200ms">
+        <div class="arch hero-arch">
+          <Image src={heroPortrait} alt="Gitanjali, smiling, seated on a sofa in a navy kurta and cream dupatta" widths={[480, 760, 1100]} sizes="(min-width: 64rem) 34vw, 80vw" class="photo-fill" loading="eager" fetchpriority="high" />
+          <span class="arch-sheen" aria-hidden="true"></span>
+        </div>
+
+        <a href="/breathe" class="float-card glass fc-breathe">
+          <span class="mini-orb" aria-hidden="true"></span>
+          <span><strong>Take a breath</strong><small>A one-minute pause →</small></span>
+        </a>
+        <div class="float-card glass fc-word">
+          <span class="fc-name">{site.practitioner}</span>
+          <small>Counsellor & Family Therapist</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ================= FINDER ================= -->
+  <section class="section finder-section" id="finder">
+    <div class="wrap finder-grid">
+      <div class="finder-copy">
+        <h2 class="h2 reveal">What’s weighing on you <em>today?</em></h2>
+        <div class="feelings reveal" role="group" aria-label="Feelings">
+          {feelings.map((f) => (
+            <button type="button" class="feeling" data-feeling={f.service} aria-pressed="false">{f.label}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="finder-result reveal" data-finder-result aria-live="polite">
+        <div class="fr-aura" data-fr-aura aria-hidden="true"></div>
+        <div class="fr-empty" data-fr-empty>
+          <span class="fr-orb" aria-hidden="true"></span>
+          <p class="h3">Pick a feeling, and I’ll show you where we might begin.</p>
+        </div>
+        <div class="fr-body" data-fr-body hidden>
+          <h3 class="h2" data-fr-title></h3>
+          <p class="fr-tagline" data-fr-tagline></p>
+          <div class="fr-actions">
+            <a class="btn btn-primary" data-fr-book href="/contact">Book for this <Icon name="arrow" /></a>
+            <a class="link-arrow" data-fr-link href="/services">Read more <Icon name="arrow" /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="application/json" id="finder-data" set:html={JSON.stringify(finderData)} />
+  </section>
+
+  <!-- ================= SERVICES ================= -->
+  <section class="section services-section" id="services">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="h2 reveal">How I can <em class="grad-text">help</em></h2>
+      </div>
+
+      <ul class="bento">
+        {services.map((s, i) => (
+          <li class:list={['bento-item reveal', spans[i]]} style={`--d:${(i % 3) * 80}ms; --a:${s.theme.a}; --b:${s.theme.b}; --c:${s.theme.c}; --acc:${s.theme.accent}`}>
+            <a href={`/services/${s.slug}`} class="svc">
+              <div class="svc-photo">
+                <Image src={s.photo} alt="" widths={[420, 720, 1000]} sizes="(min-width: 64rem) 40vw, 92vw" class="photo-fill" />
+              </div>
+              <div class="svc-body">
+                <span class="svc-icon"><Icon name={serviceIcons[i]} /></span>
+                <h3 class="h3">{s.title}</h3>
+                <p>{s.teaser}</p>
+                <span class="svc-go" aria-hidden="true"><Icon name="arrow-up-right" /></span>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= MEANING ================= -->
+  <section class="section meaning-section">
+    <div class="wrap meaning-grid">
+      <div class="meaning-word grain reveal">
+        <Aurora colors={['#C9E7DE', '#FADCD0', '#FCE8DC', '#D3EDE5', '#DCE8F4']} intensity={0.9} />
+        <svg class="balance" viewBox="0 0 400 260" aria-hidden="true">
+          <defs>
+            <radialGradient id="bA" cx=".35" cy=".3"><stop offset="0" stop-color="#fff" /><stop offset=".4" stop-color="#BFE3D8" /><stop offset="1" stop-color="#5FA595" /></radialGradient>
+            <radialGradient id="bB" cx=".35" cy=".3"><stop offset="0" stop-color="#fff" /><stop offset=".4" stop-color="#F9D8CB" /><stop offset="1" stop-color="#EFA48B" /></radialGradient>
+            <linearGradient id="bL" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="360" y2="0"><stop offset="0" stop-color="#5FA595" /><stop offset="1" stop-color="#EFA48B" /></linearGradient>
+          </defs>
+          <path d="M200 236 L184 252 H216 Z" fill="#1D1A3B" opacity=".14" />
+          <g class="beam">
+            <line x1="40" y1="236" x2="360" y2="236" stroke="url(#bL)" stroke-width="3" stroke-linecap="round" />
+            <circle cx="96" cy="194" r="40" fill="url(#bA)" />
+            <circle cx="300" cy="200" r="34" fill="url(#bB)" />
+          </g>
+        </svg>
+        <p class="deva-big" lang="sa">{site.nameDevanagari}</p>
+        <p class="pron"><em>sāmya</em> · Sanskrit · <span>balance, harmony, equipoise</span></p>
+      </div>
+      <div class="meaning-copy">
+        <h2 class="h2 reveal">Not someone new. Just <em>more in balance.</em></h2>
+        <ul class="promise-list">
+          {promises.map((p, i) => (
+            <li class="reveal" style={`--d:${i * 60}ms`}>
+              <span class="p-icon"><Icon name={p.icon} /></span>
+              <strong>{p.title}</strong>
+            </li>
+          ))}
+        </ul>
+        <a href="/why-samya" class="link-arrow reveal">Why Samya <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MEET GITANJALI ================= -->
+  <section class="section meet-section">
+    <div class="wrap meet-grid">
+      <div class="meet-visual reveal">
+        <div class="arch meet-arch">
+          <Image src={tea} alt="Gitanjali listening attentively during a session, notebook in hand" widths={[420, 700, 960]} sizes="(min-width: 64rem) 32vw, 86vw" class="photo-fill" />
+        </div>
+        <div class="name-card glass">
+          <strong>{site.practitionerFull}</strong>
+          <small>{site.role}</small>
+        </div>
+        <span class="meet-blob" aria-hidden="true"></span>
+      </div>
+      <div class="meet-copy">
+        <h2 class="h2 reveal">Hello, I’m <em class="grad-text">{site.practitioner}.</em></h2>
+        <p class="pull reveal">A safe space to be heard, beyond any diagnosis.</p>
+        <ul class="creds reveal">
+          <li class="chip">PG Diploma, Counselling & Family Therapy</li>
+          <li class="chip">Trauma-informed care, University of Delhi</li>
+          <li class="chip">CBT</li>
+          <li class="chip">Clinical Hypnosis</li>
+        </ul>
+        <a href="/about" class="btn btn-ghost reveal">Read my story <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROCESS ================= -->
+  <section class="section process-section" data-process>
+    <div class="wrap">
+      <div class="section-head center">
+        <h2 class="h2 reveal">Starting is simpler <em>than it feels.</em></h2>
+      </div>
+      <div class="steps-wrap">
+      <span class="steps-line" aria-hidden="true"><span data-line></span></span>
+      <ol class="steps">
+        {steps.map((s, i) => (
+          <li class="step reveal" style={`--d:${i * 100}ms`}>
+            <span class="step-n">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="h3">{s.title}</h3>
+            <p class="muted">{s.short}</p>
+          </li>
+        ))}
+      </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIALS ================= -->
+  <section class="section on-dark kind-section">
+    <Aurora colors={['#2B5C5E', '#3A4A6A', '#24465A', '#2E4E6E', '#1E6E86']} intensity={0.8} />
+    <div class="wrap kind-inner">
+      <div class="section-head center">
+        <h2 class="h2 reveal">In their own <em>words</em></h2>
+      </div>
+      <div class="kind-grid">
+        {testimonialList.map((t, i) => (
+          <Testimonial t={t} tone="dark" excerpt class={`reveal kind-${i}`} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CIRCLE + BREATHE ================= -->
+  <section class="section">
+    <div class="wrap duo">
+      <a href="/grief-circle" class="duo-card circle-card reveal">
+        <Image src={circleSky} alt="" widths={[600, 1000]} sizes="(min-width: 56rem) 46vw, 92vw" class="photo-fill duo-img" />
+        <div class="duo-shade" aria-hidden="true"></div>
+        <div class="duo-copy">
+          <span class="badge">Free · Voluntary</span>
+          <h2 class="h2">You don’t have to grieve <em>alone.</em></h2>
+          <p>A small, free grief-support circle.</p>
+          <span class="link-arrow light">About the Grief Circle <Icon name="arrow" /></span>
+        </div>
+      </a>
+      <div class="duo-card breathe-card reveal" style="--d:120ms">
+        <Aurora colors={['#C9E7DE', '#F9D8CB', '#CFEBE3', '#DCE8F4', '#FCE7D9']} />
+        <div class="breathe-copy">
+          <h2 class="h3">Take one slow minute.</h2>
+        </div>
+        <BreathOrb />
+        <a href="/breathe" class="link-arrow">More ways to ground yourself <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="section faq-section">
+    <div class="wrap faq-grid">
+      <div>
+        <h2 class="h2 reveal">Common <em>questions</em></h2>
+        <a href="/faq" class="link-arrow reveal">All questions <Icon name="arrow" /></a>
+      </div>
+      <Faq items={faqPreview} class="reveal" />
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; overflow: hidden; isolation: isolate;
+    background: var(--g-soft);
+    padding: clamp(7.5rem, 14vw, 10rem) 0 clamp(4rem, 8vw, 6rem);
+    min-height: min(100svh, 62rem);
+    display: grid; align-items: center;
+  }
+  .hero::after { content: ''; position: absolute; inset: auto 0 0; height: 30%; background: linear-gradient(transparent, var(--bg)); z-index: 0; }
+  .hero-grid { position: relative; z-index: 1; display: grid; gap: clamp(3rem, 6vw, 4rem); align-items: center; }
+  .hero-copy { display: grid; gap: 1.5rem; justify-items: start; }
+  .hero-copy .display { max-width: 11ch; }
+  .hero-copy .lead { max-width: 34rem; }
+  .hero-ctas { display: flex; flex-wrap: wrap; gap: .75rem; }
+  .hero-trust { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; font-size: .875rem; color: var(--ink-2); font-weight: 500; }
+  .hero-trust li { display: inline-flex; align-items: center; gap: .4rem; }
+  .hero-trust :global(svg) { width: 1.05rem; height: 1.05rem; color: var(--violet); }
+
+  .hero-visual { position: relative; width: min(100%, 30rem); justify-self: center; padding: 0 1.5rem; }
+  .hero-arch { position: relative; aspect-ratio: 4 / 5; box-shadow: 0 40px 90px -40px rgba(45, 106, 95, .55); }
+  .arch-sheen { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,255,255,.1), transparent 35%, rgba(192,102,77,.1)); }
+  .float-card {
+    position: absolute; border-radius: 1.25rem; padding: .9rem 1.1rem;
+    display: flex; align-items: center; gap: .75rem; text-decoration: none;
+    animation: float 7s var(--ease-breath) infinite;
+  }
+  .float-card small { display: block; font-size: .75rem; color: var(--ink-3); }
+  .float-card strong { display: block; font-size: .9375rem; }
+  .fc-breathe { left: -.25rem; top: 14%; animation-delay: -2s; transition: transform .3s; }
+  .fc-breathe:hover { box-shadow: var(--shadow-lift); }
+  .mini-orb { width: 2.4rem; height: 2.4rem; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, #BFE3D8 40%, #F2B49E); animation: mini 8s var(--ease-breath) infinite; }
+  @keyframes mini { 0%,100% { transform: scale(.8); } 50% { transform: scale(1.12); } }
+  .fc-quote { right: -.5rem; bottom: 16%; max-width: 15rem; flex-direction: column; align-items: flex-start; gap: .35rem; animation-delay: -4.5s; }
+  .fc-quote p { font-family: var(--font-display); font-size: 1.15rem; line-height: 1.25; }
+  .fc-word { left: 8%; bottom: -1.25rem; flex-direction: column; align-items: flex-start; gap: 0; animation-delay: -1s; }
+  .fc-word .fc-name { font-family: var(--font-display); font-style: italic; font-size: 1.6rem; line-height: 1.15; padding-right: .1em; background: var(--g-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  @media (max-width: 63.99rem) {
+    .hero { min-height: 0; padding-top: 6.5rem; }
+    .hero-grid { gap: 1.75rem; }
+    .hero-visual { order: -1; width: min(100%, 19rem); padding: 0; }
+    .hero-arch { aspect-ratio: 1; }
+    .fc-breathe { display: none; }
+    .fc-word { left: auto; right: -1rem; bottom: .75rem; padding: .6rem .9rem; }
+    .fc-word .fc-name { font-size: 1.3rem; }
+  }
+  @media (min-width: 64rem) {
+    .hero-grid { grid-template-columns: 1.1fr .9fr; }
+    .hero-visual { justify-self: end; }
+  }
+
+  /* ---------- Marquee ---------- */
+  .marquee { overflow: hidden; padding: 1.4rem 0; border-block: 1px solid var(--line); background: var(--bg); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .track { display: flex; width: max-content; animation: marquee 50s linear infinite; }
+  .marquee:hover .track { animation-play-state: paused; }
+  .track ul { list-style: none; display: flex; }
+  .track li { display: inline-flex; align-items: center; gap: 2.25rem; padding-right: 2.25rem; font-family: var(--font-display); font-size: clamp(1.4rem, 2.4vw, 2rem); white-space: nowrap; color: var(--ink); }
+  .track li:nth-child(3n+2) { font-style: italic; color: var(--violet-deep); }
+  .track :global(svg) { width: 1.1rem; height: 1.1rem; color: var(--magenta); }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* ---------- Finder ---------- */
+  .finder-grid { display: grid; gap: 2.5rem; align-items: stretch; }
+  .finder-copy { display: grid; gap: 1.1rem; align-content: start; }
+  .feelings { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .75rem; }
+  .feeling {
+    padding: .75rem 1.15rem; border-radius: var(--r-pill);
+    background: var(--surface); border: 1.5px solid var(--line);
+    font-size: .9375rem; font-weight: 500; color: var(--ink);
+    transition: border-color .25s, background .25s, transform .25s var(--ease-out), box-shadow .25s;
+  }
+  .feeling:hover { border-color: var(--violet); transform: translateY(-2px); }
+  .feeling[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; box-shadow: 0 10px 24px -12px rgba(27,42,58,.6); }
+
+  .finder-result {
+    position: relative; overflow: hidden; isolation: isolate;
+    min-height: 24rem; border-radius: var(--r-card);
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-soft);
+    padding: clamp(1.75rem, 4vw, 3rem);
+    display: grid; align-content: center;
+  }
+  .fr-aura {
+    position: absolute; inset: -60%; z-index: -1;
+    background: radial-gradient(40% 50% at 20% 20%, var(--fa, #E3F2EC), transparent 70%),
+                radial-gradient(45% 50% at 85% 30%, var(--fb, #FBE6DC), transparent 70%),
+                radial-gradient(50% 50% at 50% 95%, var(--fc, #FCE8DC), transparent 70%);
+    transition: opacity .6s;
+    animation: spin-slow 40s linear infinite;
+  }
+  .fr-empty { display: grid; gap: 1rem; justify-items: start; }
+  .fr-orb { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, #BFE3D8 45%, #F2B49E); animation: mini 8s var(--ease-breath) infinite; }
+  .fr-body { display: grid; gap: 1rem; animation: fr-in .6s var(--ease-out); }
+  .fr-body .eyebrow { color: var(--fr-acc, var(--violet-deep)); }
+  .fr-tagline { font-family: var(--font-display); font-style: italic; font-size: 1.35rem; line-height: 1.3; color: var(--fr-ink, var(--ink)); }
+  .fr-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: .5rem; }
+  @keyframes fr-in { from { opacity: 0; transform: translateY(12px); } }
+  @media (min-width: 60rem) { .finder-grid { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+
+  /* ---------- Services bento ---------- */
+  .services-section { background: linear-gradient(180deg, var(--bg), var(--bg-2) 40%, var(--bg)); }
+  .section-head.split { display: grid; gap: 1.25rem; align-items: end; }
+  @media (min-width: 56rem) { .section-head.split { grid-template-columns: 1.2fr 1fr; } }
+  .bento { list-style: none; display: grid; gap: 1rem; }
+  .svc {
+    position: relative; isolation: isolate; overflow: hidden;
+    display: grid; height: 100%; min-height: 26rem;
+    border-radius: var(--r-card); text-decoration: none; color: var(--ink);
+    background: linear-gradient(140deg, var(--a), var(--b) 55%, var(--c));
+    transition: transform .5s var(--ease-out), box-shadow .5s var(--ease-out);
+  }
+  .svc:hover { transform: translateY(-6px); box-shadow: 0 40px 70px -40px color-mix(in srgb, var(--acc) 70%, transparent); }
+  .svc-photo { position: absolute; inset: 0; z-index: -1; }
+  .svc-photo :global(img) { transition: transform 1.2s var(--ease-out); }
+  .svc:hover .svc-photo :global(img) { transform: scale(1.06); }
+  .svc-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 25%, color-mix(in srgb, var(--a) 40%, transparent) 55%, color-mix(in srgb, var(--b) 92%, transparent) 100%); }
+  .svc-body {
+    align-self: end; margin: .75rem; padding: 1.4rem 1.4rem 1.5rem;
+    border-radius: calc(var(--r-card) - .5rem);
+    background: rgba(255,255,255,.78);
+    -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
+    border: 1px solid rgba(255,255,255,.9);
+    display: grid; gap: .5rem; position: relative;
+  }
+  .svc-body p { color: var(--ink-2); font-size: .9375rem; max-width: 38ch; }
+  .svc-icon { width: 2.6rem; height: 2.6rem; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, var(--a), var(--b)); color: var(--acc); margin-bottom: .25rem; }
+  .svc-icon :global(svg) { width: 1.3rem; height: 1.3rem; }
+  .svc-go {
+    position: absolute; top: 1.2rem; right: 1.2rem;
+    width: 2.6rem; height: 2.6rem; border-radius: 50%; display: grid; place-items: center;
+    background: var(--ink); color: #fff;
+    transition: transform .4s var(--ease-out), background .3s;
+  }
+  .svc-go :global(svg) { width: 1.1rem; height: 1.1rem; }
+  .svc:hover .svc-go { transform: rotate(45deg); background: var(--acc); }
+  @media (min-width: 48rem) {
+    .bento { grid-template-columns: repeat(6, 1fr); }
+    .s2 { grid-column: span 3; } .s3 { grid-column: span 3; } .s4 { grid-column: span 3; }
+  }
+  @media (min-width: 64rem) {
+    .s2 { grid-column: span 2; } .s4 { grid-column: span 4; }
+    .svc { min-height: 30rem; }
+  }
+
+  /* ---------- Meaning ---------- */
+  .meaning-grid { display: grid; gap: 3rem; align-items: center; }
+  .meaning-word { position: relative; overflow: hidden; isolation: isolate; display: grid; justify-items: center; align-content: center; text-align: center; padding: clamp(2.5rem, 6vw, 4rem) 1.5rem; border-radius: var(--r-card); background: #F1F7F4; min-height: 100%; }
+  .meaning-word > :not(.aurora) { position: relative; z-index: 1; }
+  .balance { width: min(100%, 26rem); }
+  .beam { transform-origin: 200px 236px; animation: rock 9s var(--ease-breath) infinite; }
+  @keyframes rock { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+  .deva-big {
+    font-family: var(--font-deva); font-weight: 500;
+    font-size: clamp(4.5rem, 12vw, 8rem); line-height: 1.1; margin-top: -1rem;
+    background: var(--g-text); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .pron { color: var(--ink-2); }
+  .pron em { font-family: var(--font-display); font-size: 1.3rem; color: var(--ink); }
+  .pron span { font-weight: 500; color: var(--violet-deep); }
+  .meaning-copy { display: grid; gap: 1.5rem; justify-items: start; }
+  .promise-list { list-style: none; display: grid; gap: .25rem; width: 100%; }
+  .promise-list li { display: flex; align-items: center; gap: 1rem; padding: .9rem 0; border-bottom: 1px solid var(--line); }
+  .promise-list strong { display: block; font-weight: 500; margin-bottom: .1rem; }
+  .promise-list .muted { display: block; }
+  .p-icon { flex: none; width: 2.6rem; height: 2.6rem; border-radius: .9rem; display: grid; place-items: center; background: var(--g-dawn); color: var(--violet-deep); }
+  .p-icon :global(svg) { width: 1.25rem; height: 1.25rem; }
+  @media (min-width: 60rem) { .meaning-grid { grid-template-columns: 1fr 1.1fr; gap: 5rem; align-items: stretch; } }
+
+  /* ---------- Meet ---------- */
+  .meet-section { background: linear-gradient(180deg, var(--bg), #FBF3EF 50%, var(--bg)); }
+  .meet-grid { display: grid; gap: 3.5rem; align-items: center; }
+  .meet-visual { position: relative; width: min(100%, 26rem); justify-self: center; }
+  .meet-arch :global(img) { object-position: 60% 30%; }
+  .hero-arch :global(img) { object-position: 50% 22%; }
+  .meet-arch { aspect-ratio: 3 / 4; position: relative; z-index: 1; box-shadow: var(--shadow-lift); }
+  .meet-blob { position: absolute; inset: 8% -10% -6% 12%; border-radius: 999px 999px 2rem 2rem; background: linear-gradient(160deg, #BFE3D8, #F8D2C2 60%, #FBE0D2); z-index: 0; transform: rotate(6deg); }
+  .name-card { position: absolute; z-index: 2; left: -1rem; bottom: 2rem; border-radius: 1.25rem; padding: 1rem 1.25rem; }
+  .name-card strong { display: block; font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; line-height: 1.1; }
+  .name-card small { display: block; font-size: .8125rem; color: var(--ink-2); max-width: 15rem; }
+  .meet-copy { display: grid; gap: 1.4rem; justify-items: start; }
+  .pull { font-family: var(--font-display); font-style: italic; font-size: clamp(1.5rem, 2.4vw, 2rem); line-height: 1.25; color: var(--ink); padding-left: 1.25rem; border-left: 3px solid; border-image: var(--g-cta) 1; }
+  .creds { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; }
+  @media (min-width: 60rem) { .meet-grid { grid-template-columns: .85fr 1.15fr; gap: 6rem; } }
+
+  /* ---------- Process ---------- */
+  .steps-wrap { position: relative; }
+  .steps { list-style: none; position: relative; display: grid; gap: 2rem; counter-reset: s; }
+  .steps-line { display: none; }
+  .step { display: grid; gap: .75rem; padding: 1.75rem; border-radius: var(--r-card); background: var(--surface); border: 1px solid var(--line); position: relative; }
+  .step-n {
+    width: 3.25rem; height: 3.25rem; border-radius: 50%; display: grid; place-items: center;
+    background: var(--g-cta); color: #fff; font-weight: 600; font-size: .9375rem;
+    box-shadow: 0 0 0 6px var(--bg), 0 10px 24px -10px rgba(45,106,95,.7);
+  }
+  @media (min-width: 56rem) {
+    .steps { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+    .steps-line { display: block; position: absolute; left: 3.4rem; right: 3.4rem; top: 3.4rem; height: 2px; background: var(--line); z-index: 1; }
+    .steps-line span { display: block; height: 100%; width: 100%; background: var(--g-cta); transform-origin: left; transform: scaleX(var(--p, 0)); }
+    .step { background: transparent; border: 0; padding: 1.75rem 1.5rem; }
+    .step-n { position: relative; z-index: 2; }
+  }
+
+  /* ---------- Kind words ---------- */
+  .kind-section { overflow: hidden; isolation: isolate; background: var(--night); }
+  .kind-inner { position: relative; z-index: 1; }
+  .kind-grid { display: grid; gap: 1.25rem; align-items: start; }
+  .kind-note { text-align: center; margin-top: 2rem; font-size: .8125rem; color: var(--ink-2); }
+  @media (min-width: 60rem) { .kind-grid { grid-template-columns: 1.35fr 1fr; } :global(.kind-1) { margin-top: 4rem; } }
+
+  /* ---------- Duo ---------- */
+  .duo { display: grid; gap: 1.25rem; }
+  .duo-card { position: relative; overflow: hidden; isolation: isolate; border-radius: var(--r-card); min-height: 34rem; }
+  .circle-card { display: grid; align-items: end; text-decoration: none; color: #fff; }
+  .duo-img { position: absolute; inset: 0; z-index: -2; transition: transform 1.2s var(--ease-out); }
+  .circle-card:hover .duo-img { transform: scale(1.05); }
+  .duo-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(22,34,47,.05) 20%, rgba(22,34,47,.55) 55%, rgba(22,34,47,.88)); }
+  .duo-copy { padding: clamp(1.75rem, 4vw, 2.75rem); display: grid; gap: 1rem; justify-items: start; }
+  .duo-copy p { color: #E2EAEE; max-width: 30rem; }
+  .badge { padding: .4rem .85rem; border-radius: var(--r-pill); background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: .8125rem; font-weight: 500; }
+  .link-arrow.light { color: #fff; }
+  .breathe-card { display: grid; justify-items: center; align-content: space-between; gap: 1.5rem; padding: clamp(1.75rem, 4vw, 2.75rem); background: #F1F7F4; text-align: center; }
+  .breathe-card > :not(.aurora) { position: relative; z-index: 1; }
+  .breathe-copy { display: grid; gap: .5rem; justify-items: center; }
+  @media (min-width: 56rem) { .duo { grid-template-columns: 1.15fr 1fr; } }
+
+  /* ---------- FAQ ---------- */
+  .faq-grid { display: grid; gap: 2.5rem; }
+  .faq-grid > div:first-child { display: grid; gap: 1.1rem; align-content: start; justify-items: start; }
+  @media (min-width: 60rem) { .faq-grid { grid-template-columns: .8fr 1.2fr; gap: 5rem; } .faq-grid > div:first-child { position: sticky; top: 7rem; } }
+</style>
+
+<script>
+  function initHome() {
+    // ---- Finder ----
+    const dataEl = document.getElementById('finder-data');
+    const result = document.querySelector<HTMLElement>('[data-finder-result]');
+    if (dataEl && result && !result.dataset.ready) {
+      result.dataset.ready = '1';
+      const data = JSON.parse(dataEl.textContent || '{}');
+      const btns = document.querySelectorAll<HTMLButtonElement>('[data-feeling]');
+      const $ = (s: string) => result.querySelector<HTMLElement>(s)!;
+      btns.forEach((b) => b.addEventListener('click', () => {
+        const slug = b.dataset.feeling!;
+        const s = data[slug];
+        btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        $('[data-fr-empty]').hidden = true;
+        const body = $('[data-fr-body]');
+        body.hidden = false;
+        // Restart the entrance so each choice feels answered.
+        body.style.animation = 'none'; void body.offsetWidth; body.style.animation = '';
+        $('[data-fr-title]').textContent = s.title;
+        $('[data-fr-tagline]').textContent = s.tagline;
+        (result.querySelector('[data-fr-book]') as HTMLAnchorElement).href = `/contact?service=${slug}&feeling=${encodeURIComponent(b.textContent || '')}`;
+        (result.querySelector('[data-fr-link]') as HTMLAnchorElement).href = `/services/${slug}`;
+        result.style.setProperty('--fa', s.theme.a);
+        result.style.setProperty('--fb', s.theme.b);
+        result.style.setProperty('--fc', s.theme.c);
+        result.style.setProperty('--fr-acc', s.theme.accent);
+        result.style.setProperty('--fr-ink', s.theme.ink);
+      }));
+    }
+
+    // ---- Process line fills as the section passes ----
+    const proc = document.querySelector<HTMLElement>('[data-process]');
+    const line = proc?.querySelector<HTMLElement>('[data-line]');
+    if (proc && line) {
+      const onScroll = () => {
+        const r = proc.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, (window.innerHeight * 0.8 - r.top) / (r.height * 0.8)));
+        line.style.setProperty('--p', p.toFixed(3));
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      document.addEventListener('astro:before-swap', () => window.removeEventListener('scroll', onScroll), { once: true });
+    }
+  }
+  document.addEventListener('astro:page-load', initHome);
+</script>

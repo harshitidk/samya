@@ -1,0 +1,381 @@
+---
+import Base from '../layouts/Base.astro';
+import Aurora from '../components/Aurora.astro';
+import Icon from '../components/Icon.astro';
+import { Image } from 'astro:assets';
+import face from '../assets/photos/gitanjali-portrait.jpg';
+import { services } from '../data/services';
+import { site, whatsappHref, telHref } from '../config/site';
+
+const who = [
+  { v: 'Myself', icon: 'person', hint: 'Individual counselling' },
+  { v: 'My child or teen', icon: 'child', hint: 'Child & adolescent support' },
+  { v: 'My family', icon: 'users', hint: 'Family or relationship work' },
+  { v: 'Someone I care about', icon: 'heart', hint: 'Reaching out on their behalf' },
+];
+const times = ['Mornings', 'Afternoons', 'Evenings', 'Weekends'];
+const config = { endpoint: site.formEndpoint, wa: site.whatsappNumber, name: site.practitioner };
+---
+
+<Base title="Book a session" description={`Reach out to ${site.practitioner} at Samya. A short, gentle form, or simply WhatsApp or call. Replies ${site.replyTime}.`} hideBar>
+  <section class="c-hero" data-hide-bar>
+    <Aurora />
+    <div class="wrap c-grid">
+      <!-- ============ Left: reassurance + direct lines ============ -->
+      <aside class="c-side">
+        <h1 class="h1 reveal" style="--d:60ms">Let’s begin, <em class="grad-text">gently.</em></h1>
+        <div class="who-reply reveal" style="--d:100ms">
+          <Image src={face} alt="" widths={[120, 240]} sizes="4rem" class="avatar-img" />
+          <span><strong>{site.practitioner}</strong><small>Replies personally, {site.replyTime}</small></span>
+        </div>
+      </aside>
+
+      <aside class="c-extra">
+        <div class="direct reveal" style="--d:180ms">
+          <a href={whatsappHref()} target="_blank" rel="noopener" class="d-card wa">
+            <span class="d-icon"><Icon name="whatsapp" /></span>
+            <span><strong>WhatsApp</strong></span>
+            <Icon name="arrow-up-right" class="d-go" />
+          </a>
+          <a href={telHref} class="d-card">
+            <span class="d-icon"><Icon name="phone" /></span>
+            <span><strong>{site.phoneDisplay}</strong></span>
+            <Icon name="arrow-up-right" class="d-go" />
+          </a>
+          <a href={`mailto:${site.email}`} class="d-card">
+            <span class="d-icon"><Icon name="mail" /></span>
+            <span><strong>{site.email}</strong></span>
+            <Icon name="arrow-up-right" class="d-go" />
+          </a>
+        </div>
+
+
+        <p class="crisis reveal" id="urgent">
+          <Icon name="lifebuoy" />
+          <span><strong>In crisis?</strong> Call {site.crisis.serviceName} on
+          <a href={`tel:${site.crisis.numbers[0]}`}>{site.crisis.numbers[0]}</a> (free, 24×7) or emergency services on
+          <a href={`tel:${site.crisis.emergency}`}>{site.crisis.emergency}</a>.</span>
+        </p>
+      </aside>
+
+      <!-- ============ Right: the stepped form ============ -->
+      <div class="form-wrap reveal" style="--d:140ms">
+        <form class="bform" data-bform novalidate>
+          <div class="f-top">
+            <p class="f-count"><span data-stepnum>1</span> of 4</p>
+            <div class="f-bar" aria-hidden="true"><span data-bar></span></div>
+          </div>
+
+          <!-- Step 1 -->
+          <fieldset class="step" data-fstep="0">
+            <legend class="h3">Who is this for?</legend>
+            <div class="who">
+              {who.map((w) => (
+                <label class="opt-card">
+                  <input type="radio" name="for" value={w.v} />
+                  <span class="oc-icon"><Icon name={w.icon} /></span>
+                  <span class="oc-text"><strong>{w.v}</strong><small>{w.hint}</small></span>
+                  <span class="oc-check" aria-hidden="true"><Icon name="check" /></span>
+                </label>
+              ))}
+            </div>
+            <p class="err" data-err hidden>Please choose one, there’s no wrong answer.</p>
+          </fieldset>
+
+          <!-- Step 2 -->
+          <fieldset class="step" data-fstep="1" hidden>
+            <legend class="h3">What’s bringing you here?</legend>
+            <div class="chips">
+              {services.map((s) => (
+                <label class="chip-opt" style={`--a:${s.theme.a};--b:${s.theme.b}`}>
+                  <input type="checkbox" name="topics" value={s.title} data-slug={s.slug} />
+                  <span><i aria-hidden="true"></i>{s.short}</span>
+                </label>
+              ))}
+              <label class="chip-opt" style="--a:#E2ECE8;--b:#F1F6F3">
+                <input type="checkbox" name="topics" value="I’m not sure yet" />
+                <span><i aria-hidden="true"></i>I’m not sure yet</span>
+              </label>
+            </div>
+            <label class="field">
+              <span>Anything you’d like {site.practitioner} to know? <em>(optional)</em></span>
+              <textarea name="message" rows="3" data-message></textarea>
+            </label>
+            <p class="err" data-err hidden>Pick at least one, or “I’m not sure yet”.</p>
+          </fieldset>
+
+          <!-- Step 3 -->
+          <fieldset class="step" data-fstep="2" hidden>
+            <legend class="h3">How would you like to meet?</legend>
+            <div class="seg">
+              {['Online', 'In person', 'Not sure yet'].map((m) => (
+                <label><input type="radio" name="mode" value={m} /><span>{m}</span></label>
+              ))}
+            </div>
+            <p class="sub">Best way to reach you</p>
+            <div class="seg">
+              {['WhatsApp', 'Phone call', 'Email'].map((m) => (
+                <label><input type="radio" name="reach" value={m} /><span>{m}</span></label>
+              ))}
+            </div>
+            <p class="sub">Times that usually suit you <em>(optional)</em></p>
+            <div class="seg multi">
+              {times.map((t) => (
+                <label><input type="checkbox" name="times" value={t} /><span>{t}</span></label>
+              ))}
+            </div>
+            <p class="err" data-err hidden>Let me know how best to reach you.</p>
+          </fieldset>
+
+          <!-- Step 4 -->
+          <fieldset class="step" data-fstep="3" hidden>
+            <legend class="h3">Lastly, how do I reach you?</legend>
+            <label class="field">
+              <span>Your name, or what you’d like to be called</span>
+              <input type="text" name="name" autocomplete="given-name" required />
+            </label>
+            <label class="field" data-phone-field>
+              <span>Phone / WhatsApp number</span>
+              <input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="+91" />
+            </label>
+            <label class="field" data-email-field>
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" />
+            </label>
+            <label class="consent">
+              <input type="checkbox" name="consent" required />
+              <span>I understand Samya isn’t an emergency service, and what I share here is only used to reply to me.</span>
+            </label>
+            <p class="err" data-err hidden>Please add your name, a way to reach you, and tick the box.</p>
+          </fieldset>
+
+          <div class="f-nav">
+            <button type="button" class="btn btn-ghost" data-back hidden><Icon name="arrow-left" />Back</button>
+            <button type="button" class="btn btn-primary" data-next>Continue <Icon name="arrow" /></button>
+            <button type="submit" class="btn btn-primary" data-submit hidden>Send <Icon name="arrow" /></button>
+          </div>
+          <p class="privacy-note"><Icon name="shield" />Private and confidential.</p>
+        </form>
+
+        <div class="thanks" data-thanks hidden tabindex="-1">
+          <span class="t-orb" aria-hidden="true"></span>
+          <h2 class="h2">Thank you, <em data-tname>friend</em>.</h2>
+          <p class="lead" data-tmsg>{site.practitioner} will reply {site.replyTime}.</p>
+          <a class="btn btn-wa" data-twa hidden target="_blank" rel="noopener"><Icon name="whatsapp" />Send on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <script type="application/json" id="bform-config" set:html={JSON.stringify(config)} />
+  </section>
+</Base>
+
+<style>
+  .c-hero { position: relative; overflow: hidden; isolation: isolate; background: var(--g-soft); padding: clamp(7.5rem, 13vw, 9rem) 0 clamp(4rem, 8vw, 6rem); min-height: 100svh; }
+  .c-grid { position: relative; z-index: 1; display: grid; gap: 2.5rem; align-items: start; grid-template-areas: "head" "form" "extra"; }
+  .c-side { grid-area: head; }
+  .form-wrap { grid-area: form; }
+  .c-extra { grid-area: extra; display: grid; gap: 1.4rem; }
+  .c-side { display: grid; gap: 1.4rem; }
+  .c-side .lead { max-width: 32rem; }
+  .who-reply { display: flex; align-items: center; gap: .85rem; }
+  .who-reply :global(.avatar-img) { width: 3.5rem; height: 3.5rem; border-radius: 50%; object-fit: cover; object-position: 50% 22%; border: 3px solid #fff; box-shadow: var(--shadow-soft); }
+  .who-reply strong { display: block; font-weight: 500; }
+  .who-reply small { display: block; font-size: .8125rem; color: var(--ink-3); }
+  .direct { display: grid; gap: .6rem; margin-top: .5rem; }
+  .d-card {
+    display: flex; align-items: center; gap: 1rem; padding: .9rem 1.1rem; border-radius: 1.25rem;
+    background: rgba(255,255,255,.7); border: 1px solid #fff; text-decoration: none;
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    transition: transform .3s var(--ease-out), box-shadow .3s;
+  }
+  .d-card:hover { transform: translateX(4px); box-shadow: var(--shadow-soft); }
+  .d-card > span:nth-child(2) { flex: 1; min-width: 0; }
+  .d-card strong { display: block; font-weight: 500; overflow-wrap: anywhere; }
+  .d-card small { display: block; font-size: .8125rem; color: var(--ink-3); }
+  .d-icon { flex: none; width: 2.75rem; height: 2.75rem; border-radius: 50%; display: grid; place-items: center; background: var(--bg-2); color: var(--violet-deep); }
+  .wa .d-icon { background: #DFF7E8; color: #0E7A3F; }
+  .d-card :global(.d-go) { color: var(--ink-3); }
+  .next { list-style: none; display: grid; gap: .6rem; margin-top: .5rem; color: var(--ink-2); font-size: .9375rem; }
+  .next li { display: flex; gap: .75rem; align-items: flex-start; }
+  .next span { flex: none; width: 1.6rem; height: 1.6rem; border-radius: 50%; display: grid; place-items: center; background: var(--g-cta); color: #fff; font-size: .75rem; font-weight: 600; }
+  .crisis { display: flex; gap: .75rem; padding: 1rem 1.15rem; border-radius: 1.1rem; background: #FCEFEA; border: 1px solid #F6D7CC; font-size: .875rem; color: var(--ink-2); scroll-margin-top: 7rem; }
+  .crisis :global(svg) { flex: none; width: 1.3rem; height: 1.3rem; color: var(--magenta); margin-top: .1rem; }
+  .crisis a { font-weight: 600; color: var(--ink); }
+
+  .form-wrap { border-radius: 2rem; background: rgba(255,255,255,.88); border: 1px solid #fff; box-shadow: var(--shadow-lift); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); padding: clamp(1.5rem, 4vw, 2.75rem); }
+  .f-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem; }
+  .f-count { font-size: .8125rem; font-weight: 500; color: var(--ink-3); white-space: nowrap; }
+  .f-bar { flex: 1; height: 6px; border-radius: 6px; background: var(--bg-2); overflow: hidden; }
+  .f-bar span { display: block; height: 100%; width: 25%; background: var(--g-cta); border-radius: 6px; transition: width .6s var(--ease-out); }
+
+  .step { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 1rem; animation: st-in .5s var(--ease-out); }
+  @keyframes st-in { from { opacity: 0; transform: translateX(16px); } }
+  .step legend { padding: 0; margin-bottom: .25rem; }
+  .hint, .sub { font-size: .9375rem; color: var(--ink-2); }
+  .sub { font-weight: 500; color: var(--ink); margin-top: .75rem; }
+  .sub em, .field em { font-weight: 400; color: var(--ink-3); font-style: normal; }
+
+  .who { display: grid; gap: .6rem; }
+  .opt-card {
+    position: relative; display: flex; align-items: center; gap: 1rem; padding: 1rem 1.1rem; border-radius: 1.25rem; cursor: pointer;
+    border: 1.5px solid var(--line); background: var(--surface); transition: border-color .25s, background .25s, box-shadow .25s;
+  }
+  .opt-card input { position: absolute; opacity: 0; pointer-events: none; }
+  .opt-card:hover { border-color: rgba(45,106,95,.45); }
+  .opt-card:has(input:checked) { border-color: var(--violet); background: #EEF7F3; box-shadow: 0 0 0 3px rgba(45,106,95,.12); }
+  .opt-card:has(input:focus-visible) { outline: 3px solid var(--violet); outline-offset: 2px; }
+  .oc-icon { flex: none; width: 2.75rem; height: 2.75rem; border-radius: .9rem; display: grid; place-items: center; background: var(--g-dawn); color: var(--violet-deep); }
+  .oc-text { flex: 1; }
+  .oc-text strong { display: block; font-weight: 500; }
+  .oc-text small { font-size: .8125rem; color: var(--ink-3); }
+  .oc-check { width: 1.6rem; height: 1.6rem; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--line-strong); color: transparent; transition: all .25s; }
+  .opt-card:has(input:checked) .oc-check { background: var(--violet); border-color: var(--violet); color: #fff; }
+  @media (min-width: 40rem) { .who { grid-template-columns: 1fr 1fr; } }
+
+  .chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .chip-opt input, .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .chip-opt span {
+    display: inline-flex; align-items: center; gap: .55rem; padding: .7rem 1.05rem; border-radius: var(--r-pill); cursor: pointer;
+    border: 1.5px solid var(--line); background: var(--surface); font-size: .9375rem; font-weight: 500; transition: all .25s;
+  }
+  .chip-opt i { width: .8rem; height: .8rem; border-radius: 50%; background: linear-gradient(135deg, var(--a), var(--b)); }
+  .chip-opt:hover span { border-color: rgba(45,106,95,.45); }
+  .chip-opt input:checked + span { background: linear-gradient(135deg, var(--a), var(--b)); border-color: transparent; box-shadow: 0 8px 20px -12px rgba(27,42,58,.5); }
+  .chip-opt input:focus-visible + span, .seg input:focus-visible + span { outline: 3px solid var(--violet); outline-offset: 2px; }
+
+  .seg { display: flex; flex-wrap: wrap; gap: .4rem; padding: .35rem; border-radius: 1.2rem; background: var(--bg-2); }
+  .seg label { flex: 1 1 auto; position: relative; }
+  .seg span { display: block; text-align: center; padding: .7rem .9rem; border-radius: .9rem; font-size: .9375rem; font-weight: 500; color: var(--ink-2); cursor: pointer; transition: all .25s; }
+  .seg input:checked + span { background: #fff; color: var(--ink); box-shadow: var(--shadow-soft); }
+  .seg.multi input:checked + span { background: var(--ink); color: #fff; }
+
+  .field { display: grid; gap: .45rem; font-size: .9375rem; font-weight: 500; }
+  .field input, .field textarea {
+    width: 100%; padding: .9rem 1.1rem; border-radius: 1rem; border: 1.5px solid var(--line-strong); background: var(--surface);
+    font-weight: 400; font-size: 1rem; transition: border-color .2s, box-shadow .2s; resize: vertical;
+  }
+  .field input:focus, .field textarea:focus { outline: 0; border-color: var(--violet); box-shadow: 0 0 0 4px rgba(45,106,95,.14); }
+  .consent { display: flex; gap: .75rem; align-items: flex-start; font-size: .875rem; color: var(--ink-2); cursor: pointer; }
+  .consent input { width: 1.2rem; height: 1.2rem; margin-top: .15rem; accent-color: var(--violet); flex: none; }
+  .err { color: #B3264F; font-size: .875rem; font-weight: 500; }
+
+  .f-nav { display: flex; justify-content: space-between; gap: .75rem; margin-top: 2rem; }
+  .f-nav [data-next], .f-nav [data-submit] { margin-left: auto; }
+  .privacy-note { display: flex; align-items: center; gap: .5rem; justify-content: center; margin-top: 1.25rem; font-size: .8125rem; color: var(--ink-3); }
+
+  .thanks { display: grid; gap: 1.25rem; justify-items: center; text-align: center; padding: 2rem 0; outline: 0; animation: st-in .6s var(--ease-out); }
+  .thanks em { background: var(--g-text); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+  .t-orb { width: 5rem; height: 5rem; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, #BFE3D8 40%, #F2B49E 80%, #FBE3D3); box-shadow: 0 0 60px 10px rgba(159,211,197,.7); animation: float 6s var(--ease-breath) infinite; }
+
+  @media (min-width: 64rem) { .c-grid { grid-template-columns: .9fr 1.1fr; grid-template-areas: "head form" "extra form"; column-gap: 4.5rem; row-gap: 2rem; } .form-wrap { position: sticky; top: 7rem; } }
+</style>
+
+<script>
+  function initForm() {
+    const form = document.querySelector<HTMLFormElement>('[data-bform]');
+    if (!form || form.dataset.ready) return;
+    form.dataset.ready = '1';
+    const cfg = JSON.parse(document.getElementById('bform-config')!.textContent || '{}');
+    const steps = [...form.querySelectorAll<HTMLFieldSetElement>('[data-fstep]')];
+    const bar = form.querySelector<HTMLElement>('[data-bar]')!;
+    const num = form.querySelector<HTMLElement>('[data-stepnum]')!;
+    const back = form.querySelector<HTMLButtonElement>('[data-back]')!;
+    const next = form.querySelector<HTMLButtonElement>('[data-next]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const thanks = document.querySelector<HTMLElement>('[data-thanks]')!;
+    let i = 0;
+
+    // Arriving from a service page or the finder pre-selects what you already told us.
+    const params = new URLSearchParams(location.search);
+    const pre = params.get('service');
+    if (pre) form.querySelectorAll<HTMLInputElement>('input[name="topics"]').forEach((c) => { if (c.dataset.slug === pre) c.checked = true; });
+    const feeling = params.get('feeling');
+    if (feeling) (form.querySelector('[data-message]') as HTMLTextAreaElement).value = `${feeling}.`;
+
+    const val = (n: string) => (form.querySelector<HTMLInputElement>(`input[name="${n}"]:checked`)?.value || '');
+    const vals = (n: string) => [...form.querySelectorAll<HTMLInputElement>(`input[name="${n}"]:checked`)].map((x) => x.value);
+    const field = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value.trim();
+
+    const valid = (k: number) => {
+      if (k === 0) return !!val('for');
+      if (k === 1) return vals('topics').length > 0;
+      if (k === 2) return !!val('reach');
+      const reach = val('reach');
+      const contactOk = reach === 'Email' ? /\S+@\S+\.\S+/.test(field('email')) : field('phone').replace(/\D/g, '').length >= 8;
+      return !!field('name') && contactOk && (form.elements.namedItem('consent') as HTMLInputElement).checked;
+    };
+    const show = (k: number) => {
+      i = k;
+      steps.forEach((s, j) => (s.hidden = j !== k));
+      steps[k].querySelector<HTMLElement>('[data-err]')!.hidden = true;
+      bar.style.width = `${((k + 1) / steps.length) * 100}%`;
+      num.textContent = String(k + 1);
+      back.hidden = k === 0;
+      next.hidden = k === steps.length - 1;
+      submit.hidden = k !== steps.length - 1;
+      if (k === 3) {
+        const reach = val('reach');
+        (form.querySelector('[data-email-field]') as HTMLElement).style.order = reach === 'Email' ? '-1' : '';
+        form.querySelector<HTMLElement>('[data-email-field] span')!.textContent = reach === 'Email' ? 'Email' : 'Email (optional)';
+        form.querySelector<HTMLElement>('[data-phone-field] span')!.textContent = reach === 'Email' ? 'Phone / WhatsApp (optional)' : 'Phone / WhatsApp number';
+      }
+      steps[k].querySelector<HTMLElement>('legend')?.focus?.();
+    };
+    const go = () => {
+      if (!valid(i)) { steps[i].querySelector<HTMLElement>('[data-err]')!.hidden = false; return; }
+      show(i + 1);
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    next.addEventListener('click', go);
+    back.addEventListener('click', () => show(i - 1));
+    // Choosing on step one is an answer in itself, so move on for them.
+    form.querySelectorAll<HTMLInputElement>('input[name="for"]').forEach((r) => r.addEventListener('change', () => setTimeout(go, 280)));
+    form.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA' && i < steps.length - 1) { e.preventDefault(); go(); }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!valid(3)) { steps[3].querySelector<HTMLElement>('[data-err]')!.hidden = false; return; }
+      const data = {
+        for: val('for'), topics: vals('topics'), message: field('message'),
+        mode: val('mode'), reach: val('reach'), times: vals('times'),
+        name: field('name'), phone: field('phone'), email: field('email'),
+      };
+      const text = [
+        `Hi ${cfg.name}, I’m ${data.name}. I found Samya online and would like to talk.`,
+        `This is for: ${data.for}`,
+        `What’s bringing me here: ${data.topics.join(', ')}`,
+        data.message && `A little more: ${data.message}`,
+        data.mode && `I’d prefer: ${data.mode}`,
+        data.times.length ? `Usually free: ${data.times.join(', ')}` : '',
+        `Best way to reach me: ${data.reach}${data.reach === 'Email' ? ` (${data.email})` : data.phone ? ` (${data.phone})` : ''}`,
+      ].filter(Boolean).join('\n');
+
+      let sent = false;
+      if (cfg.endpoint) {
+        submit.disabled = true;
+        try {
+          const r = await fetch(cfg.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data) });
+          sent = r.ok;
+        } catch { sent = false; }
+        submit.disabled = false;
+      }
+
+      form.hidden = true;
+      thanks.hidden = false;
+      thanks.querySelector<HTMLElement>('[data-tname]')!.textContent = data.name;
+      if (!sent) {
+        // No form backend yet (or it failed): hand everything to WhatsApp so nothing is lost.
+        const wa = thanks.querySelector<HTMLAnchorElement>('[data-twa]')!;
+        wa.href = `https://wa.me/${cfg.wa}?text=${encodeURIComponent(text)}`;
+        wa.hidden = false;
+                thanks.querySelector<HTMLElement>('[data-tmsg]')!.textContent = 'One tap sends it to Gitanjali on WhatsApp.';
+      }
+      thanks.focus();
+    });
+
+    show(0);
+  }
+  document.addEventListener('astro:page-load', initForm);
+</script>

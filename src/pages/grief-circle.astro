@@ -1,0 +1,117 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Aurora from '../components/Aurora.astro';
+import Icon from '../components/Icon.astro';
+import Testimonial from '../components/Testimonial.astro';
+import { testimonials } from '../data/content';
+import { site, whatsappHref } from '../config/site';
+import hands from '../assets/photos/hands-stack.jpg';
+import dusk from '../assets/photos/sky-pink.jpg';
+
+const waText = `Hi ${site.practitioner}, I’d like to know more about the grief circle at Samya.`;
+const feels = [
+  { t: 'Small', b: 'A handful of people, so everyone can be heard.' },
+  { t: 'Informal', b: 'No agenda to follow, no homework, no performance.' },
+  { t: 'Voluntary', b: 'Come when it helps. Speak, or simply listen.' },
+  { t: 'Free', b: 'Offered completely without charge, always.' },
+];
+---
+
+<Base title="Grief Circle" description="A small, informal and completely free grief-support circle at Samya, where people share, listen, and feel a little less alone.">
+  <section class="gc-hero on-dark">
+    <Image src={dusk} alt="" widths={[800, 1400, 2000]} sizes="100vw" class="gc-bg" loading="eager" />
+    <div class="gc-veil" aria-hidden="true"></div>
+    <div class="wrap gc-inner">
+      <span class="badge reveal">Free · Voluntary · Small</span>
+      <h1 class="display reveal" style="--d:60ms">You don’t have to grieve <em>alone.</em></h1>
+      <p class="lead reveal" style="--d:120ms">
+        A small, informal and free grief-support circle at Samya.
+      </p>
+      <div class="reveal" style="--d:180ms">
+        <a href={whatsappHref(waText)} class="btn btn-primary" target="_blank" rel="noopener"><Icon name="whatsapp" />Ask about the next circle</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap gc-grid">
+      <div class="gc-copy">
+        <h2 class="h2 reveal">Grief can be <em class="grad-text">lonely.</em></h2>
+        <p class="lead reveal">Sometimes it helps to sit with people who understand, without having to explain. Share, remember, or simply listen.</p>
+      </div>
+      <div class="gc-media reveal">
+        <Image src={hands} alt="Several hands resting together in a circle" widths={[480, 800]} sizes="(min-width: 60rem) 40vw, 92vw" class="photo-fill" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="wrap">
+      <ul class="feels">
+        {feels.map((f, i) => (
+          <li class="reveal" style={`--d:${i * 70}ms`}>
+            <span class="f-ring" aria-hidden="true"><span></span></span>
+            <h3 class="h3">{f.t}</h3>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+
+  <section class="section-tight">
+    <div class="wrap-narrow">
+      <Testimonial t={testimonials.snigdha} size="lg" tone="tinted" class="reveal gc-tm" />
+    </div>
+  </section>
+
+  <section class="section" data-hide-bar>
+    <div class="wrap">
+      <div class="gc-cta grain reveal">
+        <Aurora colors={['#C9E7DE', '#F9D8CB', '#FCE5D7', '#CFEBE3', '#DCE8F4']} />
+        <div class="gc-cta-inner">
+          <h2 class="h2">Would you like to <em>join?</em></h2>
+          <p class="lead">Message me for the next date.</p>
+          <div class="btns">
+            <a href={whatsappHref(waText)} class="btn btn-primary" target="_blank" rel="noopener"><Icon name="whatsapp" />Message on WhatsApp</a>
+            <a href="/services/grief-counselling" class="btn btn-glass">About grief counselling</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .gc-hero { position: relative; overflow: hidden; isolation: isolate; min-height: min(96svh, 56rem); display: grid; align-items: end; padding: 9rem 0 clamp(3.5rem, 8vw, 6rem); background: var(--night); }
+  .gc-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .gc-veil { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(22,34,47,.1) 0%, rgba(22,34,47,.35) 45%, rgba(22,34,47,.88) 100%); }
+  .gc-inner { display: grid; gap: 1.4rem; justify-items: start; }
+  .gc-inner .display { max-width: 12ch; color: #fff; }
+  .gc-inner .display em { font-style: italic; background: linear-gradient(100deg, #D6EDE5, #F9D8CB 60%, #FCE5D7); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+  .gc-inner .lead { color: #E2EAEE; max-width: 36rem; }
+  .badge { padding: .45rem .95rem; border-radius: var(--r-pill); background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: .8125rem; font-weight: 500; color: #fff; }
+
+  .gc-grid { display: grid; gap: 3rem; align-items: center; }
+  .gc-copy { display: grid; gap: 1.25rem; }
+  .gc-media { aspect-ratio: 5 / 4; border-radius: var(--r-photo); overflow: hidden; box-shadow: var(--shadow-lift); }
+  @media (min-width: 60rem) { .gc-grid { grid-template-columns: 1fr 1fr; gap: 5rem; } .gc-grid.flip .gc-media { order: -1; } }
+
+  .feels { list-style: none; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+  .feels li { display: grid; gap: .5rem; padding: 2rem 1.5rem; border-radius: var(--r-card); background: var(--g-dawn); text-align: center; justify-items: center; }
+  .f-ring { width: 4rem; height: 4rem; border-radius: 50%; border: 1.5px dashed rgba(45,106,95,.5); display: grid; place-items: center; margin-bottom: .5rem; animation: spin-slow 30s linear infinite; }
+  .f-ring span { width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--g-cta); }
+
+  .rules { list-style: none; display: grid; gap: 1rem; }
+  .rules li { display: flex; gap: 1rem; align-items: flex-start; padding: 1.1rem 1.25rem; border-radius: 1.25rem; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
+  .rules li :global(svg) { flex: none; width: 1.4rem; height: 1.4rem; color: var(--violet); margin-top: .15rem; }
+  .rules strong { color: var(--ink); }
+
+  :global(.gc-tm) { background: var(--g-dawn) !important; }
+
+  .gc-cta { position: relative; overflow: hidden; isolation: isolate; border-radius: clamp(2rem, 4vw, 3rem); background: #F1F7F4; padding: clamp(3rem, 7vw, 5.5rem) clamp(1.5rem, 5vw, 4rem); text-align: center; }
+  .gc-cta-inner { position: relative; z-index: 1; display: grid; gap: 1.25rem; justify-items: center; }
+  .gc-cta .lead { max-width: 34rem; }
+  .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: .5rem; }
+</style>

@@ -1,0 +1,60 @@
+---
+import Aurora from './Aurora.astro';
+import Icon from './Icon.astro';
+import { site, whatsappHref } from '../config/site';
+
+interface Props {
+  title?: string;
+  body?: string;
+  service?: string;
+  colors?: string[];
+}
+const {
+  title = 'Whenever you’re ready, <em>I’m here.</em>',
+  body = 'A simple hello is enough.',
+  service,
+  colors,
+} = Astro.props;
+const bookHref = service ? `/contact?service=${service}` : '/contact';
+---
+<section class="section cta-section" data-hide-bar>
+  <div class="wrap">
+    <div class="cta grain reveal">
+      <Aurora colors={colors} intensity={1.1} />
+      <div class="cta-inner">
+        <span class="orb" aria-hidden="true"></span>
+        <h2 class="h1" set:html={title} />
+        <p class="lead">{body}</p>
+        <div class="btns">
+          <a href={bookHref} class="btn btn-primary">Book a session <Icon name="arrow" /></a>
+          <a href={whatsappHref()} class="btn btn-glass" target="_blank" rel="noopener"><Icon name="whatsapp" />Message on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative; overflow: hidden; isolation: isolate;
+    border-radius: clamp(2rem, 4vw, 3rem);
+    background: linear-gradient(140deg, #E6F3EE, #FCEDE6 50%, #FDF1EA);
+    padding: clamp(3.5rem, 8vw, 6.5rem) clamp(1.5rem, 5vw, 4rem);
+    text-align: center;
+  }
+  .cta-inner { position: relative; z-index: 1; display: grid; justify-items: center; gap: 1.4rem; }
+  .cta h2 { max-width: 14ch; }
+  .cta h2 :global(em) { background: var(--g-text); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+  .cta .lead { max-width: 36rem; }
+  .orb {
+    width: 4.5rem; height: 4.5rem; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff, #CDE9DF 35%, #F8D2C2 70%, #FBE3D3);
+    box-shadow: 0 0 0 10px rgba(255,255,255,.35), 0 0 60px 10px rgba(159, 211, 197, .7);
+    animation: breathe 8s var(--ease-breath) infinite;
+  }
+  @keyframes breathe { 0%, 100% { transform: scale(.85); } 50% { transform: scale(1.1); } }
+  .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: .5rem; }
+  .assure { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem 1.5rem; margin-top: .5rem; font-size: .875rem; color: var(--ink-2); }
+  .assure li { display: inline-flex; align-items: center; gap: .4rem; }
+  .assure :global(svg) { width: 1rem; height: 1rem; color: var(--violet); }
+</style>

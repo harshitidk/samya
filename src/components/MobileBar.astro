@@ -1,0 +1,53 @@
+---
+import Icon from './Icon.astro';
+import { whatsappHref, telHref } from '../config/site';
+---
+<div class="mobile-bar" data-mobile-bar>
+  <a href={telHref} class="mb-icon" aria-label="Call"><Icon name="phone" /></a>
+  <a href={whatsappHref()} class="mb-icon wa" aria-label="WhatsApp" target="_blank" rel="noopener"><Icon name="whatsapp" /></a>
+  <a href="/contact" class="btn btn-primary mb-book">Book a session</a>
+</div>
+
+<style>
+  .mobile-bar {
+    position: fixed; left: .75rem; right: .75rem; bottom: calc(.75rem + env(safe-area-inset-bottom));
+    z-index: var(--z-bar);
+    display: flex; gap: .5rem; align-items: center;
+    padding: .45rem; border-radius: var(--r-pill);
+    background: rgba(255,255,255,.82);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6); backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid #fff;
+    box-shadow: 0 18px 50px -18px rgba(27, 42, 58, .5);
+    transform: translateY(160%);
+    transition: transform .5s var(--ease-out);
+  }
+  .mobile-bar.show { transform: none; }
+  .mb-icon {
+    flex: none; width: 3rem; height: 3rem; border-radius: 50%;
+    display: grid; place-items: center; background: var(--bg-2); color: var(--ink);
+  }
+  .mb-icon.wa { background: #DFF7E8; color: #0E7A3F; }
+  .mb-icon :global(svg) { width: 1.3rem; height: 1.3rem; }
+  .mb-book { flex: 1; min-height: 3rem; }
+  @media (min-width: 48rem) { .mobile-bar { display: none; } }
+</style>
+
+<script>
+  // Appears once the reader has left the hero, and steps aside at the page's own call to action.
+  function initBar() {
+    const bar = document.querySelector<HTMLElement>('[data-mobile-bar]');
+    if (!bar) return;
+    const hideAt = document.querySelectorAll('[data-hide-bar], footer');
+    const visible = new Set<Element>();
+    const update = () => bar.classList.toggle('show', window.scrollY > window.innerHeight * 0.6 && visible.size === 0);
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => (e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)));
+      update();
+    });
+    hideAt.forEach((el) => io.observe(el));
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+    document.addEventListener('astro:before-swap', () => { io.disconnect(); window.removeEventListener('scroll', update); }, { once: true });
+  }
+  document.addEventListener('astro:page-load', initBar);
+</script>

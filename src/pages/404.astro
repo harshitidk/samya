@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Aurora from '../components/Aurora.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Base title="Page not found" description="This page couldn’t be found.">
+  <section class="nf">
+    <Aurora />
+    <div class="wrap-narrow nf-inner">
+      <span class="nf-orb" aria-hidden="true"></span>
+      <h1 class="h1">This path doesn’t lead anywhere, <em class="grad-text">and that’s okay.</em></h1>
+      <p class="lead">Take a breath. Let’s find our way back together.</p>
+      <div class="btns">
+        <a href="/" class="btn btn-primary">Back home <Icon name="arrow" /></a>
+        <a href="/services" class="btn btn-glass">See services</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { position: relative; overflow: hidden; isolation: isolate; min-height: 90svh; display: grid; place-items: center; background: var(--g-soft); padding: 8rem 0 4rem; }
+  .nf-inner { position: relative; z-index: 1; display: grid; gap: 1.4rem; justify-items: center; text-align: center; }
+  .nf-orb { width: 6rem; height: 6rem; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, #BFE3D8 40%, #F2B49E 80%, #FBE3D3); box-shadow: 0 0 70px 14px rgba(159,211,197,.7); animation: float 6s var(--ease-breath) infinite; }
+  .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; }
+</style>

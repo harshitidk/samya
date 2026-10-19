@@ -1,0 +1,194 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Aurora from '../components/Aurora.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Testimonial from '../components/Testimonial.astro';
+import { education, areas, testimonialList } from '../data/content';
+import { site } from '../config/site';
+
+import portrait from '../assets/photos/gitanjali-chair.jpg';
+import stones from '../assets/photos/gitanjali-session.jpg';
+import hands from '../assets/photos/hands-held.jpg';
+---
+
+<Base title={`About ${site.practitioner}`} description={`Meet ${site.practitioner}, counsellor, family therapist and grief counsellor at Samya. A compassionate, non-judgemental space beyond labels or diagnoses.`}>
+  <!-- ================= HERO ================= -->
+  <section class="a-hero">
+    <Aurora colors={['#C9E7DE', '#F9D8CB', '#FCE5D7', '#CFEBE3', '#DCE8F4']} />
+    <div class="wrap a-hero-grid">
+      <div class="a-copy">
+        <h1 class="display reveal" style="--d:60ms">Hello, I’m <em class="grad-text">{site.practitioner}.</em></h1>
+        <p class="lead reveal" style="--d:120ms">
+          A space where individuals and families feel heard and supported, beyond labels or diagnoses.
+        </p>
+      </div>
+      <div class="a-visual reveal" style="--d:120ms">
+        <div class="arch a-arch">
+          <Image src={portrait} alt="Gitanjali sitting in an armchair in a sunlit room full of plants, smiling" widths={[420, 720, 960]} sizes="(min-width: 64rem) 30vw, 80vw" class="photo-fill" loading="eager" />
+        </div>
+        <div class="sig glass">
+          <span class="sig-name">{site.practitioner}</span>
+          <small>Founder, Samya</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STORY ================= -->
+  <section class="section">
+    <div class="wrap story-grid">
+      <div class="story">
+        <p class="story-lead reveal">I’m a counsellor, family therapist and grief counsellor.</p>
+        <p class="reveal">
+          I work with people through bereavement, chronic illness, estrangement, separation, anger, and questions of
+          self-esteem and identity. I also support the families of people living with depression, anxiety, bipolar
+          disorder and OCD, so they can understand and care without losing themselves.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= APPROACH ================= -->
+  <section class="section approach">
+    <div class="wrap approach-grid">
+      <div class="approach-media reveal">
+        <Image src={stones} alt="Gitanjali listening attentively during a session, notebook in hand" widths={[480, 800]} sizes="(min-width: 60rem) 40vw, 92vw" class="photo-fill" />
+      </div>
+      <div class="approach-copy">
+        <h2 class="h2 reveal">Built around <em>you.</em></h2>
+        <p class="lead reveal">
+          Your circumstances, your relationships, your pace. I focus on building self-awareness and the strengths you
+          already have, so you can move through change with more clarity and confidence.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AREAS ================= -->
+  <section class="section-tight">
+    <div class="wrap">
+      <div class="areas-card grain">
+        <Aurora colors={['#D6EDE5', '#FBE1D6', '#FCE8DC', '#D6F4EA', '#E3EDF6']} intensity={0.8} />
+        <div class="areas-inner">
+            <h2 class="h2 reveal">What I <em>work with</em></h2>
+          <ul class="areas">
+            {areas.map((a, i) => <li class="reveal" style={`--d:${i * 40}ms`}>{a}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EDUCATION ================= -->
+  <section class="section">
+    <div class="wrap edu-grid">
+      <div>
+        <h2 class="h2 reveal">Education & <em>training</em></h2>
+      </div>
+      <ol class="timeline">
+        {education.map((e, i) => (
+          <li class="reveal" style={`--d:${i * 80}ms`}>
+            <span class="t-dot" aria-hidden="true"></span>
+            <h3>{e.title}</h3>
+            <p class="small muted">{e.where}</p>
+            {'note' in e && e.note && <p class="t-note">{e.note}</p>}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= COMMITMENT ================= -->
+  <section class="section on-dark commit">
+    <Aurora colors={['#2B5C5E', '#3A4A6A', '#24465A', '#2E4E6E', '#1E6E86']} intensity={0.8} />
+    <div class="wrap commit-grid">
+      <div class="commit-copy">
+        <h2 class="h1 reveal">Good support shouldn’t depend on your <em class="lilac">bank balance.</em></h2>
+        <p class="lead reveal">Fees are kept affordable on purpose. Everyone deserves thoughtful, high-quality care.</p>
+      </div>
+      <div class="commit-media reveal">
+        <Image src={hands} alt="Two hands clasped together in comfort" widths={[420, 720]} sizes="(min-width: 60rem) 34vw, 92vw" class="photo-fill" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= KIND WORDS ================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head center">
+        <h2 class="h2 reveal">Kind <em>words</em></h2>
+      </div>
+      <div class="tm-grid">
+        {testimonialList.map((t) => <Testimonial t={t} class="reveal" />)}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="I’d love to <em>hear from you.</em>" />
+</Base>
+
+<style>
+  .a-hero { position: relative; overflow: hidden; isolation: isolate; background: var(--g-soft); padding: clamp(8rem, 14vw, 10rem) 0 clamp(4rem, 8vw, 6rem); }
+  .a-hero::after { content: ''; position: absolute; inset: auto 0 0; height: 25%; background: linear-gradient(transparent, var(--bg)); }
+  .a-hero-grid { position: relative; z-index: 1; display: grid; gap: 3rem; align-items: center; }
+  .a-copy { display: grid; gap: 1.4rem; justify-items: start; }
+  .a-copy .lead { max-width: 34rem; }
+  .roles { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; }
+  .a-visual { position: relative; width: min(100%, 26rem); justify-self: center; }
+  .a-arch :global(img) { object-position: 50% 25%; }
+  .a-arch { aspect-ratio: 4 / 5; box-shadow: var(--shadow-lift); }
+  .sig { position: absolute; right: -1rem; bottom: 2.5rem; padding: .9rem 1.4rem; border-radius: 1.25rem; animation: float 7s var(--ease-breath) infinite; }
+  .sig-name { display: block; font-family: var(--font-display); font-style: italic; font-size: 2rem; line-height: 1; background: var(--g-text); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .1em; }
+  .sig small { color: var(--ink-3); font-size: .8125rem; }
+  @media (min-width: 64rem) { .a-hero-grid { grid-template-columns: 1.15fr .85fr; } .a-visual { justify-self: end; } }
+
+  .story-grid { display: grid; gap: 2.5rem; }
+  .big-quote { font-family: var(--font-display); font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.2; }
+  .big-quote em { color: var(--violet-deep); }
+  .story { display: grid; gap: 1.25rem; font-size: 1.125rem; color: var(--ink-2); max-width: 40rem; text-align: center; }
+  .story-lead { font-family: var(--font-display); font-size: clamp(1.6rem, 2.8vw, 2.25rem); line-height: 1.2; color: var(--ink); }
+  .story-grid { display: block; } .story { margin-inline: auto; }
+
+  .approach { background: linear-gradient(180deg, var(--bg), var(--bg-2), var(--bg)); }
+  .approach-grid { display: grid; gap: 3rem; align-items: center; }
+  .approach-media :global(img) { object-position: 60% 30%; }
+  .approach-media { aspect-ratio: 4 / 5; border-radius: var(--r-photo); overflow: hidden; box-shadow: var(--shadow-lift); max-width: 30rem; }
+  .approach-copy { display: grid; gap: 1.4rem; }
+  .pillars { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); margin-top: .5rem; }
+  .pillar { display: grid; gap: .35rem; padding: 1.25rem; border-radius: 1.25rem; background: var(--surface); border: 1px solid var(--line); }
+  .pi { width: 2.5rem; height: 2.5rem; border-radius: .85rem; display: grid; place-items: center; background: var(--g-dawn); color: var(--violet-deep); margin-bottom: .4rem; }
+  @media (min-width: 60rem) { .approach-grid { grid-template-columns: .85fr 1.15fr; gap: 5rem; } }
+
+  .areas-card { position: relative; overflow: hidden; isolation: isolate; border-radius: clamp(2rem, 4vw, 3rem); background: #F1F7F4; padding: clamp(2rem, 6vw, 4.5rem); }
+  .areas-inner { position: relative; z-index: 1; display: grid; gap: 1rem; }
+  .areas { list-style: none; display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.25rem; }
+  .areas li {
+    padding: .85rem 1.3rem; border-radius: var(--r-pill);
+    background: rgba(255,255,255,.75); border: 1px solid #fff;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    font-weight: 500; font-size: 1rem;
+  }
+
+  .edu-grid { display: grid; gap: 2.5rem; }
+  .edu-grid > div { display: grid; gap: 1rem; align-content: start; }
+  .timeline { list-style: none; position: relative; display: grid; gap: 1rem; padding-left: 2rem; }
+  .timeline::before { content: ''; position: absolute; left: .55rem; top: 1rem; bottom: 1rem; width: 2px; background: linear-gradient(180deg, var(--violet), var(--magenta), var(--coral)); border-radius: 2px; }
+  .timeline li { position: relative; padding: 1.4rem 1.5rem; border-radius: 1.4rem; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-soft); }
+  .t-dot { position: absolute; left: -1.95rem; top: 1.75rem; width: 1.15rem; height: 1.15rem; border-radius: 50%; background: var(--surface); border: 3px solid var(--violet); }
+  .timeline h3 { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.2; margin-bottom: .25rem; }
+  .t-note { margin-top: .5rem; font-size: .875rem; font-weight: 500; color: var(--magenta); }
+  @media (min-width: 60rem) { .edu-grid { grid-template-columns: .8fr 1.2fr; gap: 5rem; } .edu-grid > div { position: sticky; top: 8rem; align-self: start; } }
+
+  .commit { overflow: hidden; isolation: isolate; }
+  .commit-grid { position: relative; z-index: 1; display: grid; gap: 3rem; align-items: center; }
+  .commit-copy { display: grid; gap: 1.4rem; }
+  .commit-copy .h1 { max-width: 16ch; }
+  .lilac { font-style: italic; background: linear-gradient(100deg, #BFE3D8, #F8D2C2 60%, #FBE3D3); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+  .commit-media { aspect-ratio: 1; border-radius: 50%; overflow: hidden; max-width: 24rem; justify-self: center; border: 8px solid rgba(255,255,255,.1); }
+  @media (min-width: 60rem) { .commit-grid { grid-template-columns: 1.3fr .7fr; gap: 5rem; } }
+
+  .tm-grid { display: grid; gap: 1.25rem; align-items: start; }
+  @media (min-width: 60rem) { .tm-grid { grid-template-columns: 1.3fr 1fr; } }
+</style>

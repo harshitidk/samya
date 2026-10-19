@@ -1,0 +1,275 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/fraunces/full.css';
+@import '@fontsource-variable/fraunces/full-italic.css';
+@import '@fontsource-variable/lexend/wght.css';
+@import './tokens.css';
+
+/* Subset to the four glyphs of साम्य, so it costs almost nothing. */
+@font-face {
+  font-family: 'Noto Sans Devanagari';
+  src: url('/fonts/NotoSansDevanagari-samya.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0900-097F;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 6.5rem;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: 330;
+  /* Fraunces is softened everywhere it appears; Lexend ignores these axes. */
+  font-variation-settings: 'SOFT' 100, 'WONK' 0;
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+img, svg, video { display: block; max-width: 100%; }
+img { height: auto; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+
+h1, h2, h3, h4 { margin: 0; font-weight: 400; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+ul, ol { margin: 0; padding: 0; }
+
+::selection { background: var(--lilac); color: var(--ink); }
+
+:focus-visible {
+  outline: 3px solid var(--violet);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip-link {
+  position: fixed; left: 1rem; top: -4rem; z-index: 100;
+  background: var(--ink); color: #fff; padding: .75rem 1.25rem; border-radius: var(--r-pill);
+  text-decoration: none; transition: top .2s;
+}
+.skip-link:focus { top: 1rem; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* ============================================================
+   Type
+   ============================================================ */
+
+/* Every Fraunces instance is fully softened: rounded terminals, no sharp corners. */
+.display, .h1, .h2, .h3,
+[class*='font-display'], h1, h2, h3, blockquote, .pull, .intro-big, .aim-text {
+  font-variation-settings: 'SOFT' 100, 'WONK' 0;
+  font-optical-sizing: auto;
+}
+.display, .h1, .h2, .h3 {
+  font-family: var(--font-display);
+  font-weight: 360;
+  letter-spacing: -0.02em;
+  line-height: var(--lh-heading);
+}
+.display { font-size: var(--fs-display); line-height: 1.02; letter-spacing: -0.03em; font-weight: 340; }
+.h1 { font-size: var(--fs-h1); line-height: 1.05; letter-spacing: -0.025em; }
+.h2 { font-size: var(--fs-h2); }
+.h3 { font-size: var(--fs-h3); line-height: 1.2; }
+.display em, .h1 em, .h2 em, .h3 em { font-style: italic; font-weight: 320; }
+
+/* One gradient word per heading, never more. */
+.grad-text {
+  background: var(--g-text);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  padding-right: .06em; /* italic overhang */
+}
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-size: var(--fs-label); font-weight: 500;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--violet-deep);
+}
+.eyebrow::before {
+  content: ''; width: .5rem; height: .5rem; border-radius: 50%;
+  background: var(--g-cta);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 16%, transparent);
+}
+.on-dark .eyebrow { color: var(--lilac); }
+
+.lead { font-size: var(--fs-lead); line-height: 1.6; color: var(--ink-2); }
+.muted { color: var(--ink-2); }
+.small { font-size: var(--fs-small); }
+.measure { max-width: var(--measure); }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+
+.wrap { width: min(100% - 2 * var(--gutter), var(--max-w)); margin-inline: auto; }
+.wrap-narrow { width: min(100% - 2 * var(--gutter), 52rem); margin-inline: auto; }
+.section { padding-block: var(--section-y); position: relative; }
+.section-tight { padding-block: calc(var(--section-y) * .6); position: relative; }
+
+.section-head { display: grid; gap: 1rem; margin-bottom: clamp(2.25rem, 5vw, 3.75rem); }
+.section-head.center { text-align: center; justify-items: center; }
+.section-head .lead { max-width: 40rem; }
+
+.on-dark {
+  background: var(--night);
+  color: #EEF4F2;
+  --ink-2: #BACAD3;
+  --line: rgba(255,255,255,.12);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.btn {
+  --btn-h: 3.25rem;
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+  min-height: var(--btn-h); padding: 0 1.6rem;
+  border-radius: var(--r-pill); border: 0;
+  font-weight: 500; font-size: 1rem; letter-spacing: 0;
+  text-decoration: none; white-space: nowrap;
+  transition: transform var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out), background-color var(--t-fast);
+  isolation: isolate;
+}
+.btn svg { width: 1.15em; height: 1.15em; flex: none; }
+.btn:active { transform: scale(.97); }
+
+.btn-primary {
+  color: #fff;
+  background: var(--g-cta);
+  background-size: 160% 100%;
+  box-shadow: 0 10px 30px -10px rgba(106, 69, 240, .65), inset 0 1px 0 rgba(255,255,255,.25);
+  transition: background-position .6s var(--ease-out), transform var(--t-fast) var(--ease-out), box-shadow var(--t-fast);
+}
+.btn-primary:hover { background-position: 100% 0; transform: translateY(-2px); box-shadow: 0 16px 36px -12px rgba(194, 60, 138, .6), inset 0 1px 0 rgba(255,255,255,.25); }
+
+.btn-glass {
+  color: var(--ink);
+  background: rgba(255,255,255,.6);
+  border: 1px solid rgba(255,255,255,.9);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-soft);
+}
+.btn-glass:hover { background: rgba(255,255,255,.85); transform: translateY(-2px); }
+
+.btn-ghost { color: var(--ink); background: transparent; border: 1.5px solid var(--line-strong); }
+.btn-ghost:hover { border-color: var(--ink); transform: translateY(-2px); }
+.on-dark .btn-ghost { color: #fff; border-color: rgba(255,255,255,.3); }
+.on-dark .btn-ghost:hover { border-color: #fff; }
+
+.btn-wa { color: #fff; background: #128C4A; box-shadow: 0 10px 26px -12px rgba(18,140,74,.7); }
+.btn-wa:hover { background: #0E7A3F; transform: translateY(-2px); }
+
+.btn-sm { --btn-h: 2.6rem; padding: 0 1.15rem; font-size: .9375rem; }
+
+.link-arrow {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-weight: 500; text-decoration: none; color: var(--violet-deep);
+}
+.link-arrow svg { width: 1.1em; height: 1.1em; transition: transform var(--t-fast) var(--ease-out); }
+.link-arrow:hover svg { transform: translateX(4px); }
+.on-dark .link-arrow { color: var(--lilac); }
+
+.link-inline { color: var(--violet-deep); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.link-inline:hover { text-decoration-thickness: 2px; }
+
+/* ============================================================
+   Surfaces
+   ============================================================ */
+
+.glass {
+  background: rgba(255,255,255,.62);
+  border: 1px solid rgba(255,255,255,.85);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: var(--shadow-soft);
+}
+.glass-dark {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.14);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+}
+
+.chip {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .5rem 1rem; border-radius: var(--r-pill);
+  background: rgba(255,255,255,.7); border: 1px solid var(--line);
+  font-size: var(--fs-small); font-weight: 500; color: var(--ink);
+}
+
+/* Photo frames. The arch is the signature shape: a doorway, a window, a place to step into. */
+.arch { border-radius: 999px 999px var(--r-card) var(--r-card); overflow: hidden; }
+.frame { border-radius: var(--r-photo); overflow: hidden; }
+.photo-fill { width: 100%; height: 100%; object-fit: cover; }
+
+/* Film grain, laid over gradients so they read as light rather than as flat fills. */
+.grain::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: var(--grain-url); opacity: .12; mix-blend-mode: overlay;
+  border-radius: inherit;
+}
+
+/* ============================================================
+   Motion: everything reveals once, then stays.
+   ============================================================ */
+
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .9s var(--ease-out), transform .9s var(--ease-out); transition-delay: var(--d, 0ms); }
+.reveal.is-in { opacity: 1; transform: none; }
+.no-js .reveal { opacity: 1; transform: none; }
+
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+
+/* Page transitions between routes. */
+::view-transition-old(root) { animation: 260ms var(--ease-out) both vt-out; }
+::view-transition-new(root) { animation: 420ms var(--ease-out) both vt-in; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(12px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 1ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* Mobile action bar needs room. */
+@media (max-width: 47.99rem) {
+  body { padding-bottom: 5.25rem; }
+}
+
+/* Icons default to the text size around them; components size them further. */
+:where(svg.icon) { width: 1.2em; height: 1.2em; flex: none; }
+
+/* Decorative bleed (blobs, floating cards) never widens the page. `clip` keeps sticky working. */
+main { overflow-x: clip; }

@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import Aurora from '../components/Aurora.astro';
+import Icon from '../components/Icon.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { faqGroups } from '../data/content';
+
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-');
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqGroups.flatMap((g) => g.items.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } }))),
+};
+---
+
+<Base title="FAQs" description="Answers to common questions about counselling at Samya: first sessions, online and in-person options, cost, confidentiality and the grief circle.">
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(faqSchema)} />
+
+  <section class="f-hero">
+    <Aurora />
+    <div class="wrap-narrow f-inner">
+      <h1 class="h1 reveal" style="--d:60ms">Questions are <em class="grad-text">welcome</em> here.</h1>
+      <label class="search reveal" style="--d:120ms">
+        <Icon name="search" />
+        <span class="sr-only">Search questions</span>
+        <input type="search" placeholder="Search, e.g. “cost” or “online”" data-faq-search autocomplete="off" />
+      </label>
+      <div class="tabs reveal" style="--d:180ms" role="group" aria-label="Filter by topic">
+        <button type="button" class="tab" aria-pressed="true" data-tab="all">All</button>
+        {faqGroups.map((g) => <button type="button" class="tab" aria-pressed="false" data-tab={slug(g.group)}>{g.group}</button>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="wrap-narrow groups">
+      {faqGroups.map((g) => (
+        <div class="group" data-group={slug(g.group)}>
+          <h2 class="h3 group-title">{g.group}</h2>
+          <Faq items={g.items} />
+        </div>
+      ))}
+      <p class="empty" data-empty hidden>Nothing matched that. <a href="/contact" class="link-inline">Ask me directly</a>, I’m happy to help.</p>
+    </div>
+  </section>
+
+  <CtaBand title="Still wondering <em>something?</em>" body="Just ask." />
+</Base>
+
+<style>
+  .f-hero { position: relative; overflow: hidden; isolation: isolate; background: var(--g-soft); padding: clamp(8rem, 14vw, 10rem) 0 clamp(2.5rem, 5vw, 3.5rem); }
+  .f-inner { position: relative; z-index: 1; display: grid; gap: 1.4rem; justify-items: center; text-align: center; }
+  .search {
+    display: flex; align-items: center; gap: .75rem; width: min(100%, 34rem);
+    padding: 0 1.25rem; height: 3.75rem; border-radius: var(--r-pill);
+    background: rgba(255,255,255,.85); border: 1px solid #fff; box-shadow: var(--shadow-soft);
+    color: var(--ink-3);
+  }
+  .search:focus-within { box-shadow: 0 0 0 3px rgba(45,106,95,.35), var(--shadow-soft); }
+  .search input { flex: 1; border: 0; background: transparent; outline: 0; font-size: 1.0625rem; color: var(--ink); min-width: 0; }
+  .tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; }
+  .tab { padding: .55rem 1rem; border-radius: var(--r-pill); border: 1px solid var(--line); background: rgba(255,255,255,.6); font-size: .875rem; font-weight: 500; color: var(--ink-2); transition: all .25s; }
+  .tab[aria-pressed='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .groups { display: grid; gap: 3rem; padding-bottom: 2rem; }
+  .group { display: grid; gap: 1rem; }
+  .group-title { color: var(--violet-deep); }
+  .empty { text-align: center; color: var(--ink-2); padding: 2rem; }
+</style>
+
+<script>
+  function initFaq() {
+    const input = document.querySelector<HTMLInputElement>('[data-faq-search]');
+    if (!input || input.dataset.ready) return;
+    input.dataset.ready = '1';
+    const tabs = document.querySelectorAll<HTMLButtonElement>('[data-tab]');
+    const groups = document.querySelectorAll<HTMLElement>('[data-group]');
+    const empty = document.querySelector<HTMLElement>('[data-empty]')!;
+    let tab = 'all';
+    const apply = () => {
+      const q = input.value.trim().toLowerCase();
+      let any = false;
+      groups.forEach((g) => {
+        let shown = 0;
+        g.querySelectorAll<HTMLDetailsElement>('[data-faq]').forEach((d) => {
+          const hit = !q || (d.dataset.q || '').includes(q);
+          d.hidden = !hit;
+          if (hit) shown++;
+          if (q && hit) d.open = true;
+        });
+        const vis = (tab === 'all' || g.dataset.group === tab) && shown > 0;
+        g.hidden = !vis;
+        if (vis) any = true;
+      });
+      empty.hidden = any;
+    };
+    input.addEventListener('input', apply);
+    tabs.forEach((t) => t.addEventListener('click', () => {
+      tab = t.dataset.tab!;
+      tabs.forEach((x) => x.setAttribute('aria-pressed', String(x === t)));
+      apply();
+    }));
+  }
+  document.addEventListener('astro:page-load', initFaq);
+</script>

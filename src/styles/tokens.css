@@ -1,0 +1,114 @@
+/* ============================================================
+   Samya design tokens.
+
+   The idea: sāmya means balance. Every colour on the site belongs
+   to one of two poles held in equilibrium, meeting in light.
+
+     calm   sea-glass   breath, stillness, clarity   (cool)
+     warmth apricot     holding, human touch          (warm)
+     ground navy        steadiness, trust             (text, actions)
+
+   Gradients only ever travel from one pole to the other through
+   light. Nothing else is introduced.
+   ============================================================ */
+
+:root {
+  /* ---- Ground ---- */
+  --bg: #F7F9F7;           /* air: a faintly cool white, never beige */
+  --bg-2: #EEF5F1;
+  --surface: #FFFFFF;
+  --ink: #1B2A3A;          /* navy, 14.6:1 on bg */
+  --ink-2: #475564;        /* 7.4:1 */
+  --ink-3: #66727E;        /* 4.8:1 */
+  --line: rgba(27, 42, 58, .09);
+  --line-strong: rgba(27, 42, 58, .2);
+
+  /* ---- Calm pole ---- */
+  --calm-50: #EEF7F3;
+  --calm-100: #DDEFE8;
+  --calm-200: #BFE3D8;
+  --calm-300: #9FD3C5;
+  --calm-600: #3D8577;
+  --calm-700: #2D6A5F;     /* text accent, 5.9:1 on bg */
+
+  /* ---- Warm pole ---- */
+  --warm-50: #FDF3EE;
+  --warm-100: #FBE6DC;
+  --warm-200: #F8D2C2;
+  --warm-300: #F2B49E;
+  --warm-600: #C0664D;
+  --warm-700: #A3503A;     /* text accent, 5.2:1 on bg */
+
+  /* ---- Sky: the light between them, used sparingly ---- */
+  --sky-100: #E3EDF6;
+  --sky-200: #CADDEE;
+
+  /* Legacy names the components use, mapped onto the two poles. */
+  --violet: var(--calm-700);
+  --violet-deep: var(--calm-700);
+  --magenta: var(--warm-700);
+  --coral: var(--warm-600);
+  --lilac: var(--calm-200);
+  --rose: var(--warm-200);
+  --peach: var(--warm-100);
+  --butter: #FBF0D8;
+  --mint: var(--calm-100);
+  --aqua: var(--calm-200);
+  --sky: var(--sky-200);
+
+  --night: #16222F;
+  --night-2: #1E3040;
+
+  /* ---- Gradients: always calm → light → warmth ---- */
+  --g-cta: linear-gradient(110deg, #1B2A3A 0%, #24404F 50%, #2D5A5C 100%);
+  --g-text: linear-gradient(100deg, #2D6A5F 0%, #2F6074 100%);
+  --g-dawn: linear-gradient(135deg, #DDEFE8 0%, #F4F8F5 50%, #FBE6DC 100%);
+  --g-soft: linear-gradient(170deg, #E6F3EE 0%, #F7F9F7 45%, #FCEEE7 100%);
+  --g-night: radial-gradient(110% 90% at 15% 0%, #24505A 0%, transparent 55%),
+             radial-gradient(90% 80% at 100% 100%, #3A3F5A 0%, transparent 55%),
+             #16222F;
+
+  /* ---- Type ----
+     Fraunces, softened: a classical serif with every corner rounded.
+     Lexend: built from reading-fluency research to ease visual stress. */
+  --font-display: 'Fraunces Variable', Georgia, serif;
+  --font-body: 'Lexend Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-deva: 'Noto Sans Devanagari', var(--font-body);
+
+  --fs-display: clamp(2.9rem, 6.6vw, 5.75rem);
+  --fs-h1: clamp(2.4rem, 4.8vw, 4rem);
+  --fs-h2: clamp(1.9rem, 3.4vw, 2.85rem);
+  --fs-h3: clamp(1.3rem, 1.8vw, 1.55rem);
+  --fs-lead: clamp(1.0625rem, 1.3vw, 1.2rem);
+  --fs-body: 1.0625rem;
+  --fs-small: .9375rem;
+  --fs-label: .75rem;
+
+  --lh-heading: 1.1;
+  --lh-body: 1.7;
+  --measure: 60ch;
+
+  /* ---- Space ---- */
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --max-w: 76rem;
+  --section-y: clamp(4.5rem, 10vw, 8rem);
+
+  /* ---- Shape: nothing sharp ---- */
+  --r-card: 1.75rem;
+  --r-photo: 2rem;
+  --r-pill: 999px;
+  --shadow-soft: 0 1px 2px rgba(27, 42, 58, .04), 0 18px 40px -24px rgba(27, 42, 58, .22);
+  --shadow-lift: 0 2px 6px rgba(27, 42, 58, .05), 0 30px 60px -30px rgba(27, 42, 58, .32);
+
+  --grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-breath: cubic-bezier(.45, 0, .55, 1);
+  --t-fast: 220ms;
+
+  /* ---- Layers ---- */
+  --z-header: 50;
+  --z-bar: 45;
+  --z-menu: 60;
+}

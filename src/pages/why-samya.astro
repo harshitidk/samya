@@ -1,0 +1,122 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Aurora from '../components/Aurora.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { promises } from '../data/content';
+import { site } from '../config/site';
+import sea from '../assets/photos/pastel-sea.jpg';
+
+const meanings = [
+  { word: 'Balance', body: 'Steadiness between what life asks of you and what you need.', g: 'linear-gradient(135deg,#BFE3D8,#5FA595)' },
+  { word: 'Harmony', body: 'Being at ease with yourself, and with the people you love.', g: 'linear-gradient(135deg,#F9D8CB,#EFA48B)' },
+  { word: 'Equality', body: 'Good support that is within reach for everyone.', g: 'linear-gradient(135deg,#FFE0C2,#FFB48A)' },
+];
+const cardGrads = [
+  ['#DDEFE8', '#FBE6DC'],
+  ['#D6F4EA', '#E3EDF6'],
+  ['#FCE8DC', '#FBE3D9'],
+  ['#E3EDF6', '#E3F2EC'],
+  ['#FBF0D8', '#DDF6EA'],
+];
+---
+
+<Base title="Why Samya" description="Samya comes from the Sanskrit word sāmya: balance, harmony and equipoise. Here is what that means for how counselling works here.">
+  <section class="w-hero">
+    <Image src={sea} alt="" widths={[800, 1400, 2000]} sizes="100vw" class="w-bg" loading="eager" />
+    <div class="w-veil" aria-hidden="true"></div>
+    <div class="wrap w-inner">
+      <p class="w-deva reveal" lang="sa" style="--d:60ms">{site.nameDevanagari}</p>
+      <h1 class="h1 reveal" style="--d:120ms"><em>sāmya</em> <span class="pos">noun · Sanskrit</span></h1>
+      <p class="w-def reveal" style="--d:180ms">balance · harmony · equality · <strong>equipoise</strong></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap-narrow ethos">
+      <p class="ethos-big reveal">
+        Not becoming someone different. Finding <em class="grad-text">balance within yourself.</em>
+      </p>
+      <p class="lead reveal">
+        Samya exists to help every person reach positive mental health, and their own potential.
+      </p>
+    </div>
+  </section>
+
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head center">
+        <h2 class="h2 reveal">When you choose <em>Samya</em></h2>
+      </div>
+      <ol class="promises">
+        {promises.map((p, i) => (
+          <li class="promise reveal" style={`--d:${(i % 2) * 90}ms; --g1:${cardGrads[i][0]}; --g2:${cardGrads[i][1]}`}>
+            <span class="pn">{String(i + 1).padStart(2, '0')}</span>
+            <span class="picon"><Icon name={p.icon} /></span>
+            <h3 class="h3">{p.title}</h3>
+            <p class="muted">{p.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section on-dark closing">
+    <Aurora colors={['#2B5C5E', '#3A4A6A', '#24465A', '#2E4E6E', '#1E6E86']} intensity={0.85} />
+    <div class="wrap-narrow closing-inner">
+      <p class="closing-text reveal">Not to tell you how to live, but to <em>walk alongside you.</em></p>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .w-hero { position: relative; overflow: hidden; isolation: isolate; min-height: min(92svh, 52rem); display: grid; align-items: end; padding: 9rem 0 clamp(3rem, 7vw, 5rem); }
+  .w-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .w-veil { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(251,250,255,.15), rgba(251,250,255,.35) 50%, rgba(251,250,255,.95)); }
+  .w-inner { display: grid; gap: .75rem; justify-items: start; }
+  .w-deva {
+    font-family: var(--font-deva); font-weight: 500; font-size: clamp(5rem, 18vw, 13rem); line-height: 1.05;
+    background: linear-gradient(100deg, #2D6A5F, #2F6074 55%, #A3503A); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 10px 40px rgba(255,255,255,.6));
+  }
+  .w-hero .h1 em { font-style: italic; }
+  .pos { font-family: var(--font-body); font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); vertical-align: middle; margin-left: .5rem; }
+  .w-def { font-size: clamp(1.1rem, 2vw, 1.4rem); color: var(--ink-2); }
+  .w-def strong { color: var(--violet-deep); }
+
+  .ethos { display: grid; gap: 1.75rem; text-align: center; justify-items: center; }
+  .ethos-big { font-family: var(--font-display); font-size: clamp(2rem, 4.4vw, 3.5rem); line-height: 1.12; letter-spacing: -.015em; }
+
+  .meanings { list-style: none; display: grid; gap: 1rem; }
+  .meanings li { display: grid; gap: .6rem; justify-items: center; text-align: center; padding: 2.5rem 1.75rem; border-radius: var(--r-card); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-soft); }
+  .m-orb { width: 4.5rem; height: 4.5rem; border-radius: 50%; margin-bottom: .75rem; box-shadow: inset -6px -8px 18px rgba(0,0,0,.08), inset 6px 8px 18px rgba(255,255,255,.6), 0 20px 40px -18px rgba(45,106,95,.5); animation: float 7s var(--ease-breath) infinite; }
+  .meanings li:nth-child(2) .m-orb { animation-delay: -2.3s; }
+  .meanings li:nth-child(3) .m-orb { animation-delay: -4.6s; }
+  @media (min-width: 52rem) { .meanings { grid-template-columns: repeat(3, 1fr); } }
+
+  .promises { list-style: none; display: grid; gap: 1rem; }
+  .promise {
+    position: relative; overflow: hidden; display: grid; gap: .75rem; align-content: start;
+    padding: clamp(1.75rem, 4vw, 2.75rem); border-radius: var(--r-card);
+    background: linear-gradient(140deg, var(--g1), var(--g2));
+    min-height: 16rem;
+  }
+  .pn { position: absolute; right: 1.25rem; top: .25rem; font-family: var(--font-display); font-size: clamp(4.5rem, 9vw, 7rem); line-height: 1; color: rgba(255,255,255,.75); }
+  .picon { position: relative; width: 3.25rem; height: 3.25rem; border-radius: 1rem; display: grid; place-items: center; background: rgba(255,255,255,.75); color: var(--violet-deep); margin-bottom: .75rem; }
+  .picon :global(svg) { width: 1.5rem; height: 1.5rem; }
+  .promise .h3, .promise p { position: relative; max-width: 30rem; }
+  @media (min-width: 52rem) {
+    .promises { grid-template-columns: repeat(6, 1fr); }
+    .promise { grid-column: span 3; }
+    .promise:nth-child(n+3) { grid-column: span 2; }
+  }
+
+  .closing { overflow: hidden; isolation: isolate; text-align: center; }
+  .closing-inner { position: relative; z-index: 1; }
+  .closing-text { font-family: var(--font-display); font-size: clamp(2rem, 4.6vw, 3.75rem); line-height: 1.12; letter-spacing: -.015em; }
+  .closing-text em { background: linear-gradient(100deg, #BFE3D8, #F8D2C2 60%, #FBE3D3); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+</style>

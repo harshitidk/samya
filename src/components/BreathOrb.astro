@@ -1,0 +1,77 @@
+---
+/* A one-minute breathing companion: in for four, out for six.
+   The long out-breath is what settles the nervous system. */
+import Icon from './Icon.astro';
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<div class:list={['bo', cls]} data-breath>
+  <div class="stage">
+    <span class="halo r1" aria-hidden="true"></span>
+    <span class="halo r2" aria-hidden="true"></span>
+    <span class="orb" data-orb aria-hidden="true"></span>
+    <p class="cue" data-cue aria-live="polite">Ready when you are</p>
+  </div>
+  <button class="btn btn-glass btn-sm" data-toggle>
+    <span data-icon-play><Icon name="play" /></span>
+    <span data-icon-pause hidden><Icon name="pause" /></span>
+    <span data-label>Start breathing</span>
+  </button>
+</div>
+
+<style>
+  .bo { display: grid; justify-items: center; gap: 1.5rem; }
+  .stage { position: relative; width: min(17rem, 70vw); aspect-ratio: 1; display: grid; place-items: center; }
+  .halo { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.95); background: rgba(255,255,255,.14); }
+  .r2 { inset: 12%; border-color: rgba(255,255,255,.45); }
+  .orb {
+    position: absolute; inset: 22%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #fff 0%, #E3F2EC 22%, #9FD3C5 52%, #F2B49E 85%, #F9D2BF 100%);
+    box-shadow: 0 0 60px 12px rgba(159, 211, 197, .55), inset -10px -14px 30px rgba(192, 102, 77, .25);
+    transform: scale(.72);
+    transition: transform 4s var(--ease-breath);
+  }
+  .cue {
+    position: relative; z-index: 1;
+    font-family: var(--font-display); font-size: 1.5rem; color: var(--ink);
+    text-shadow: 0 1px 12px rgba(255,255,255,.8);
+    text-align: center; max-width: 9ch; line-height: 1.1;
+  }
+</style>
+
+<script>
+  function initBreath() {
+    document.querySelectorAll<HTMLElement>('[data-breath]:not([data-ready])').forEach((root) => {
+      root.dataset.ready = '1';
+      const orb = root.querySelector<HTMLElement>('[data-orb]')!;
+      const cue = root.querySelector<HTMLElement>('[data-cue]')!;
+      const btn = root.querySelector<HTMLButtonElement>('[data-toggle]')!;
+      const label = root.querySelector<HTMLElement>('[data-label]')!;
+      const play = root.querySelector<HTMLElement>('[data-icon-play]')!;
+      const pause = root.querySelector<HTMLElement>('[data-icon-pause]')!;
+      let timer: number | undefined;
+      let running = false;
+
+      const phase = (inhale: boolean) => {
+        orb.style.transitionDuration = inhale ? '4s' : '6s';
+        orb.style.transform = inhale ? 'scale(1.18)' : 'scale(.72)';
+        cue.textContent = inhale ? 'Breathe in' : 'Breathe out';
+        timer = window.setTimeout(() => running && phase(!inhale), inhale ? 4000 : 6000);
+      };
+      const stop = () => {
+        running = false; clearTimeout(timer);
+        orb.style.transitionDuration = '1.2s'; orb.style.transform = 'scale(.72)';
+        cue.textContent = 'Ready when you are';
+        label.textContent = 'Start breathing'; play.hidden = false; pause.hidden = true;
+      };
+      btn.addEventListener('click', () => {
+        if (running) return stop();
+        running = true; label.textContent = 'Pause'; play.hidden = true; pause.hidden = false;
+        phase(true);
+      });
+      document.addEventListener('astro:before-swap', stop, { once: true });
+    });
+  }
+  document.addEventListener('astro:page-load', initBreath);
+</script>

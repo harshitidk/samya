@@ -1,0 +1,54 @@
+---
+/* Slow-drifting light. Soft radial blobs, pre-blurred by their own gradient
+   so nothing runs a filter, each on its own period so the light never
+   visibly repeats. Purely decorative. */
+interface Props {
+  colors?: string[];
+  class?: string;
+  intensity?: number;
+}
+const {
+  colors = ['#BFE3D8', '#F8D2C2', '#FBE0D2', '#C8E8DF', '#D6E5F2'],
+  class: cls = '',
+  intensity = 1,
+} = Astro.props;
+
+const spots = [
+  { x: 12, y: 18, s: 62, d: 26 },
+  { x: 78, y: 12, s: 58, d: 32 },
+  { x: 62, y: 72, s: 66, d: 29 },
+  { x: 18, y: 82, s: 54, d: 35 },
+  { x: 92, y: 58, s: 48, d: 23 },
+];
+---
+<div class:list={['aurora', cls]} aria-hidden="true" style={`--k:${intensity}`}>
+  {spots.map((p, i) => (
+    <span
+      style={`--x:${p.x}%;--y:${p.y}%;--s:${p.s}vmax;--c:${colors[i % colors.length]};--dur:${p.d}s;--delay:-${i * 4}s`}
+    />
+  ))}
+</div>
+
+<style>
+  .aurora {
+    position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    z-index: 0; border-radius: inherit;
+  }
+  .aurora span {
+    position: absolute;
+    left: var(--x); top: var(--y);
+    width: var(--s); height: var(--s);
+    margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+    border-radius: 50%;
+    background: radial-gradient(circle at center, var(--c) 0%, color-mix(in srgb, var(--c) 50%, transparent) 30%, transparent 68%);
+    opacity: calc(.95 * var(--k));
+    animation: drift var(--dur) var(--ease-breath) var(--delay) infinite alternate;
+    will-change: transform;
+  }
+  @keyframes drift {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    33% { transform: translate3d(6vw, -4vh, 0) scale(1.12); }
+    66% { transform: translate3d(-4vw, 5vh, 0) scale(.92); }
+    100% { transform: translate3d(3vw, 2vh, 0) scale(1.05); }
+  }
+</style>

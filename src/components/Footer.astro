@@ -1,0 +1,115 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { services } from '../data/services';
+import { site, whatsappHref, telHref } from '../config/site';
+const year = new Date().getFullYear();
+---
+<footer class="footer on-dark">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="wrap inner">
+    <div class="top">
+      <div class="brand-col">
+        <Logo light />
+        <p class="deva" lang="sa">{site.nameDevanagari} <span>· balance, harmony, equipoise</span></p>
+        <div class="contact-row">
+          <a href={whatsappHref()} target="_blank" rel="noopener" class="pill"><Icon name="whatsapp" />WhatsApp</a>
+          <a href={telHref} class="pill"><Icon name="phone" />{site.phoneDisplay}</a>
+          <a href={`mailto:${site.email}`} class="pill"><Icon name="mail" />{site.email}</a>
+        </div>
+      </div>
+
+      <nav class="cols" aria-label="Footer">
+        <div>
+          <p class="col-title">Services</p>
+          <ul>{services.map((s) => <li><a href={`/services/${s.slug}`}>{s.short}</a></li>)}</ul>
+        </div>
+        <div>
+          <p class="col-title">Samya</p>
+          <ul>
+            <li><a href="/about">About {site.practitioner}</a></li>
+            <li><a href="/why-samya">Why Samya</a></li>
+            <li><a href="/grief-circle">Grief Circle</a></li>
+            <li><a href="/breathe">A moment to breathe</a></li>
+            <li><a href="/faq">FAQs</a></li>
+            <li><a href="/contact">Book a session</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="crisis" id="urgent">
+      <span class="crisis-icon"><Icon name="lifebuoy" /></span>
+      <p>
+        <strong>In crisis?</strong> Call
+        {site.crisis.serviceName} on <a href={`tel:${site.crisis.numbers[0]}`}>{site.crisis.numbers[0]}</a> or
+        <a href={`tel:${site.crisis.numbers[1].replace(/-/g, '')}`}>{site.crisis.numbers[1]}</a> (free, 24×7), or emergency services on
+        <a href={`tel:${site.crisis.emergency}`}>{site.crisis.emergency}</a>.
+      </p>
+    </div>
+
+    <div class="bottom">
+      <p>© {year} Samya Counselling & Family Therapy</p>
+      <p><a href="/privacy">Privacy</a> · {site.modesShort} · {site.languages}</p>
+    </div>
+  </div>
+  <p class="giant" aria-hidden="true">samya</p>
+</footer>
+
+<style>
+  .footer { position: relative; overflow: hidden; padding-top: clamp(4rem, 8vw, 6rem); background: var(--g-night); }
+  .glow {
+    position: absolute; left: 50%; bottom: -30%; width: 120%; height: 80%; transform: translateX(-50%);
+    background: radial-gradient(50% 50% at 50% 50%, rgba(159, 211, 197, .35), transparent 70%);
+    pointer-events: none;
+  }
+  .inner { position: relative; z-index: 1; }
+  .top { display: grid; gap: 3rem; }
+  .deva { margin-top: 1.25rem; font-family: var(--font-deva); font-size: 1.1rem; color: #fff; }
+  .deva span { font-family: var(--font-body); font-size: .875rem; color: var(--ink-2); }
+  .blurb { margin-top: .75rem; max-width: 26rem; color: var(--ink-2); }
+  .contact-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.5rem; }
+  .pill {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .55rem 1rem; border-radius: var(--r-pill);
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
+    font-size: .875rem; text-decoration: none; color: #fff; transition: background .2s;
+  }
+  .pill:hover { background: rgba(255,255,255,.16); }
+  .pill :global(svg) { width: 1rem; height: 1rem; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .col-title { font-size: var(--fs-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: var(--lilac); margin-bottom: 1rem; }
+  .cols ul { list-style: none; display: grid; gap: .55rem; }
+  .cols a { color: #E2EAEE; text-decoration: none; font-size: .9375rem; }
+  .cols a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+  .crisis {
+    display: flex; gap: 1rem; align-items: flex-start;
+    margin-top: 3.5rem; padding: 1.25rem 1.4rem; border-radius: 1.25rem;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+    font-size: .9375rem; color: #D5E0E6;
+  }
+  .crisis strong { color: #fff; }
+  .crisis a { color: #fff; font-weight: 600; }
+  .crisis-icon { flex: none; width: 2.25rem; height: 2.25rem; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #F8D2C2, #BFE3D8); color: var(--night); }
+  .crisis-icon :global(svg) { width: 1.2rem; height: 1.2rem; }
+
+  .bottom {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 2rem;
+    margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,.1);
+    font-size: .8125rem; color: #A9B8C4;
+  }
+  .bottom a { color: inherit; }
+  .giant {
+    position: relative; z-index: 0;
+    font-family: var(--font-display); font-style: italic;
+    font-size: clamp(7rem, 30vw, 26rem); line-height: .78; text-align: center;
+    margin-top: 1.5rem; margin-bottom: -.12em;
+    background: linear-gradient(180deg, rgba(159,211,197,.35), rgba(255,184,207,.08));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    user-select: none;
+  }
+  @media (min-width: 56rem) {
+    .top { grid-template-columns: 1.3fr 1fr; }
+  }
+</style>
