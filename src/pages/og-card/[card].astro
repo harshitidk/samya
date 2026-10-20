@@ -1,0 +1,105 @@
+---
+/* Link-preview cards (1200×630). Dev-only: `npm run og` screenshots each one
+   into public/og/<card>.jpg. Nothing here ships in the production build. */
+import '../../styles/global.css';
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import Logo from '../../components/Logo.astro';
+import { services } from '../../data/services';
+import { site } from '../../config/site';
+import portrait from '../../assets/photos/gitanjali-portrait.jpg';
+import chair from '../../assets/photos/gitanjali-chair.jpg';
+import session from '../../assets/photos/gitanjali-session.jpg';
+import hands from '../../assets/photos/hands-stack.jpg';
+import sea from '../../assets/photos/pastel-sea.jpg';
+
+interface Card {
+  card: string;
+  title: string;
+  sub: string;
+  photo?: ImageMetadata;
+  pos?: string;
+  colors: [string, string, string];
+  accent: string;
+  ink?: string;
+  deva?: boolean;
+}
+
+const calm: [string, string, string] = ['#DDEFE8', '#F6F9F7', '#FBE6DC'];
+const cards: Card[] = [
+  { card: 'default', title: 'A gentle space to find your <em>balance</em> again.', sub: `Counselling, family therapy and grief support with ${site.practitioner}`, photo: portrait, pos: '50% 20%', colors: calm, accent: '#2D6A5F' },
+  { card: 'about', title: `Hello, I’m <em>${site.practitioner}.</em>`, sub: 'Counsellor, family therapist and grief counsellor', photo: chair, pos: '55% 25%', colors: calm, accent: '#2D6A5F' },
+  { card: 'services', title: 'How I can <em>help</em>', sub: 'Grief · Family · Children & teens · Anxiety · Anger · Life transitions', photo: session, pos: '60% 30%', colors: calm, accent: '#2D6A5F' },
+  { card: 'contact', title: 'Let’s begin, <em>gently.</em>', sub: `Book a session with ${site.practitioner}. A simple hello is enough.`, photo: portrait, pos: '50% 20%', colors: calm, accent: '#2D6A5F' },
+  { card: 'why-samya', title: 'साम्य', sub: 'sāmya · balance, harmony, equipoise', photo: sea, colors: calm, accent: '#2D6A5F', deva: true },
+  { card: 'grief-circle', title: 'You don’t have to grieve <em>alone.</em>', sub: 'A small, informal and free grief circle at Samya', photo: hands, colors: ['#DCE8F4', '#F7F9F7', '#FBEDE6'], accent: '#3E5F7C' },
+  { card: 'breathe', title: 'Slow down. <em>Just this breath.</em>', sub: 'A free one-minute breathing companion', colors: calm, accent: '#2D6A5F' },
+  ...services.map((s) => ({
+    card: `service-${s.slug}`,
+    title: s.title,
+    sub: s.tagline,
+    photo: s.photo,
+    colors: [s.theme.a, '#F7F9F7', s.theme.c] as [string, string, string],
+    accent: s.theme.accent,
+    ink: s.theme.ink,
+  })),
+];
+
+export function getStaticPaths() {
+  if (!import.meta.env.DEV) return [];
+  const names = ['default', 'about', 'services', 'contact', 'why-samya', 'grief-circle', 'breathe', ...services.map((s) => `service-${s.slug}`)];
+  return names.map((card) => ({ params: { card } }));
+}
+
+const c = cards.find((x) => x.card === Astro.params.card) ?? cards[0];
+---
+<html lang="en">
+  <head><meta charset="utf-8" /><meta name="robots" content="noindex" /><title>{c.card}</title></head>
+  <body>
+    <div class="og" style={`--a:${c.colors[0]};--m:${c.colors[1]};--c:${c.colors[2]};--acc:${c.accent};--tink:${c.ink ?? '#1B2A3A'}`}>
+      <span class="blob b1"></span><span class="blob b2"></span>
+      <div class="copy">
+        <Logo />
+        <h1 class:list={['title', { deva: c.deva }]} set:html={c.title} />
+        <p class="sub">{c.sub}</p>
+      </div>
+      {c.photo ? (
+        <div class="photo">
+          <Image src={c.photo} alt="" widths={[900]} sizes="420px" style={`object-position:${c.pos ?? '50% 50%'}`} />
+        </div>
+      ) : (
+        <div class="orb-wrap"><span class="orb"></span></div>
+      )}
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  html, body { margin: 0; background: #fff; }
+  astro-dev-toolbar { display: none !important; }
+  .og {
+    position: relative; overflow: hidden; width: 1200px; height: 630px;
+    background: linear-gradient(135deg, var(--a) 0%, var(--m) 52%, var(--c) 100%);
+    font-family: var(--font-body); color: var(--tink);
+  }
+  .blob { position: absolute; border-radius: 50%; }
+  .b1 { width: 620px; height: 620px; left: -200px; top: -260px; background: radial-gradient(circle, var(--a), transparent 65%); }
+  .b2 { width: 560px; height: 560px; right: 160px; bottom: -320px; background: radial-gradient(circle, var(--c), transparent 65%); }
+  .copy { position: absolute; left: 76px; top: 64px; bottom: 64px; width: 600px; display: flex; flex-direction: column; justify-content: center; gap: 26px; }
+  .copy .logo { position: absolute; top: 0; left: 0; }
+  .copy .logo svg { width: 2.6rem !important; }
+  .copy .logo .word { font-size: 2.1rem; }
+  .title { margin: 0; font-family: var(--font-display); font-weight: 340; font-size: 74px; line-height: 1.04; letter-spacing: -.03em; color: var(--tink); text-wrap: balance; }
+  .title em { font-style: italic; font-weight: 320; color: var(--acc); }
+  .title.deva { font-family: var(--font-deva); font-weight: 600; font-size: 150px; line-height: 1.1; color: var(--acc); letter-spacing: 0; }
+  .sub { margin: 0; font-size: 26px; line-height: 1.4; font-weight: 330; color: #475564; max-width: 540px; }
+  .photo {
+    position: absolute; right: 64px; top: 56px; width: 400px; height: 518px;
+    border-radius: 999px 999px 28px 28px; overflow: hidden;
+    box-shadow: 0 30px 60px -30px rgba(27, 42, 58, .45);
+    border: 6px solid rgba(255, 255, 255, .85);
+  }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .orb-wrap { position: absolute; right: 120px; top: 125px; width: 380px; height: 380px; display: grid; place-items: center; border-radius: 50%; border: 2px solid rgba(255,255,255,.9); }
+  .orb { width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #fff, #BFE3D8 40%, #F2B49E 88%); box-shadow: 0 0 90px 24px rgba(159, 211, 197, .7); }
+</style>

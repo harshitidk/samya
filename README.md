@@ -35,7 +35,7 @@ npm run build    # static site in dist/
 ## Swapping in real photos
 
 Replace a file in `src/assets/photos/` keeping the same name, or import a new one where it's used.
-The most important swap is Gitanjali's portrait: it is currently `tea-lavender.jpg`, used on `/about` and on the home "Meet your counsellor" section.
+Gitanjali's own photos are `gitanjali-portrait.jpg` (home hero), `gitanjali-session.jpg` (home and About) and `gitanjali-chair.jpg` (About).
 
 ## Booking form
 
@@ -43,3 +43,12 @@ While `formEndpoint` is empty, submitting the form writes a ready-to-send WhatsA
 Set `formEndpoint` to a Formspree (or similar) URL to receive the details by email instead.
 
 The previous site lives in `_legacy/` for reference and can be deleted.
+
+## Link previews
+
+Every page has its own preview card (WhatsApp, iMessage, LinkedIn, X…) in `public/og/`.
+After changing a heading, tagline or photo, regenerate them with `npm run og` (needs Google Chrome).
+The card designs live in `src/pages/og-card/[card].astro`, which is dev-only and never shipped.
+
+Preview images must use the live address. The build picks it up automatically on Vercel and Netlify;
+anywhere else, set `SITE_URL=https://your-domain` when building.

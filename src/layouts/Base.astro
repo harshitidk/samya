@@ -10,18 +10,23 @@ interface Props {
   title: string;
   description: string;
   hideBar?: boolean;
+  /** Name of a card in public/og/ (without .jpg). Defaults to the home card. */
+  og?: string;
+  ogAlt?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, og = 'default', ogAlt } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
-const ogImage = new URL('/og/default.png', Astro.site ?? site.url).href;
+const ogImage = new URL(`/og/${og}.jpg`, Astro.site ?? site.url).href;
+const ogImageAlt = ogAlt ?? 'Gitanjali, counsellor at Samya, smiling on a sofa beside the words: A gentle space to find your balance again.';
 const fullTitle = title.includes('Samya') ? title : `${title} · Samya Counselling`;
 
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
   name: 'Samya Counselling & Family Therapy',
-  url: site.url,
+  url: Astro.site?.href ?? site.url,
+  image: ogImage,
   email: site.email,
   telephone: site.phoneHref,
   description: 'Counselling, family therapy and grief counselling with Gitanjali. Online and in person.',
@@ -46,11 +51,19 @@ const schema = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:secure_url" content={ogImage} />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content="en_IN" />
     <meta property="og:site_name" content="Samya" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     <script is:inline>document.documentElement.classList.remove('no-js');</script>

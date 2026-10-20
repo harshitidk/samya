@@ -23,7 +23,7 @@ const waText = `Hi ${site.practitioner}, I’m reaching out about ${s.title.toLo
 
 ---
 
-<Base title={s.title} description={`${s.title} with ${site.practitioner} at Samya. ${s.tagline}`}>
+<Base og={`service-${s.slug}`} ogAlt={`${s.photoAlt}, beside the words: ${s.title}. ${s.tagline}`} title={s.title} description={`${s.title} with ${site.practitioner} at Samya. ${s.tagline}`}>
   <div style={`--a:${t.a};--b:${t.b};--c:${t.c};--acc:${t.accent};--tink:${t.ink}`}>
     <!-- ================= HERO ================= -->
     <section class="s-hero">
