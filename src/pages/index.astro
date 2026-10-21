@@ -467,9 +467,9 @@ const finderData = Object.fromEntries(
   /* ---------- Kind words ---------- */
   .kind-section { overflow: hidden; isolation: isolate; background: var(--night); }
   .kind-inner { position: relative; z-index: 1; }
-  .kind-grid { display: grid; gap: 1.25rem; align-items: start; }
+  .kind-grid { display: grid; gap: 1.25rem; align-items: stretch; }
   .kind-note { text-align: center; margin-top: 2rem; font-size: .8125rem; color: var(--ink-2); }
-  @media (min-width: 60rem) { .kind-grid { grid-template-columns: 1.35fr 1fr; } :global(.kind-1) { margin-top: 4rem; } }
+  @media (min-width: 60rem) { .kind-grid { grid-template-columns: 1fr 1fr; } }
 
   /* ---------- Duo ---------- */
   .duo { display: grid; gap: 1.25rem; }

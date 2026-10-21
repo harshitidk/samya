@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { site } from '../../config/site';
+import { services } from '../../data/services';
+import { getPosts, readMinutes, formatDate, type Post } from '../../data/blog';
+
+export async function getStaticPaths() {
+  return (await getPosts()).map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props as { post: Post };
+const { Content } = await render(post);
+const service = services.find((s) => s.slug === post.data.service);
+const ogCard = `post-${post.id}`;
+---
+
+<Base og={ogCard} ogAlt={`${post.data.photoAlt}, beside the words: ${post.data.title}`} title={post.data.title} description={post.data.description}>
+  <article>
+    <header class="a-head">
+      <div class="wrap-narrow a-head-inner">
+        <a href="/blog" class="back small reveal"><Icon name="arrow-left" />All posts</a>
+        <h1 class="h1 reveal" style="--d:60ms">{post.data.title}</h1>
+        <p class="lead reveal" style="--d:120ms">{post.data.description}</p>
+        <p class="meta small reveal" style="--d:180ms">By {site.practitioner} · {formatDate(post.data.date)} · {readMinutes(post)} min read</p>
+      </div>
+      <div class="wrap a-photo reveal" style="--d:220ms">
+        <Image src={post.data.photo} alt={post.data.photoAlt} widths={[800, 1400, 2000]} sizes="(min-width: 76rem) 76rem, 100vw" class="photo-fill" loading="eager" />
+      </div>
+    </header>
+
+    <div class="wrap-narrow prose">
+      <Content />
+    </div>
+
+    {service && (
+      <aside class="wrap-narrow next">
+        <a href={`/services/${service.slug}`} class="next-card" style={`background: linear-gradient(135deg, ${service.theme.a}, ${service.theme.b}, ${service.theme.c})`}>
+          <span class="small">Want to talk it through?</span>
+          <strong class="h3">{service.title}</strong>
+          <span class="link-arrow">How I can help <Icon name="arrow" /></span>
+        </a>
+      </aside>
+    )}
+  </article>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .a-head { padding: clamp(8rem, 14vw, 10rem) 0 0; background: var(--g-soft); }
+  .a-head-inner { display: grid; gap: 1.1rem; justify-items: start; max-width: 44rem; }
+  .a-head .h1 { font-size: clamp(2.1rem, 4.2vw, 3.4rem); }
+  .back { display: inline-flex; align-items: center; gap: .4rem; color: var(--violet-deep); text-decoration: none; font-weight: 500; }
+  .back :global(svg) { width: 1rem; height: 1rem; transition: transform var(--t-fast) var(--ease-out); }
+  .back:hover :global(svg) { transform: translateX(-3px); }
+  .meta { color: var(--ink-3); }
+  .a-photo { margin-top: clamp(2rem, 5vw, 3.5rem); aspect-ratio: 21 / 9; border-radius: var(--r-photo); overflow: hidden; box-shadow: var(--shadow-lift); transform: translateY(2rem); }
+
+  /* The post body comes from Markdown, so its elements are styled through :global. */
+  .prose { max-width: 44rem; padding: calc(var(--section-y) * .75) 0 calc(var(--section-y) * .5); display: grid; gap: 1.15rem; }
+  .prose :global(p), .prose :global(li) { color: var(--ink-2); }
+  .prose > :global(p:first-child) { font-family: var(--font-display); font-size: var(--fs-h3); line-height: 1.35; color: var(--ink); }
+  .prose :global(h2) { font-family: var(--font-display); font-weight: 360; font-size: var(--fs-h2); letter-spacing: -.02em; line-height: var(--lh-heading); margin-top: 2.25rem; }
+  .prose :global(h3) { font-family: var(--font-display); font-weight: 380; font-size: var(--fs-h3); line-height: 1.2; margin-top: 1.25rem; }
+  .prose :global(strong) { color: var(--ink); font-weight: 500; }
+  .prose :global(em) { color: var(--ink); }
+  .prose :global(a) { color: var(--violet-deep); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .prose :global(ul) { list-style: none; display: grid; gap: .65rem; }
+  .prose :global(li) { position: relative; padding-left: 1.6rem; }
+  .prose :global(li)::before {
+    content: ''; position: absolute; left: .2rem; top: .7em; width: .5rem; height: .5rem; border-radius: 50%;
+    background: linear-gradient(135deg, var(--calm-300), var(--warm-300));
+  }
+  .prose > :global(p:last-child) { font-family: var(--font-display); font-style: italic; font-size: var(--fs-h3); line-height: 1.4; color: var(--ink); margin-top: 1rem; padding-top: 1.75rem; border-top: 1px solid var(--line); }
+
+  .next-card { display: grid; gap: .5rem; justify-items: start; padding: 2rem; border-radius: var(--r-card); text-decoration: none; color: var(--ink); }
+  .next-card .small { color: var(--ink-2); }
+</style>

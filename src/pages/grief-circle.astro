@@ -3,8 +3,6 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Aurora from '../components/Aurora.astro';
 import Icon from '../components/Icon.astro';
-import Testimonial from '../components/Testimonial.astro';
-import { testimonials } from '../data/content';
 import { site, whatsappHref } from '../config/site';
 import hands from '../assets/photos/hands-stack.jpg';
 import dusk from '../assets/photos/sky-pink.jpg';
@@ -59,13 +57,6 @@ const feels = [
     </div>
   </section>
 
-
-  <section class="section-tight">
-    <div class="wrap-narrow">
-      <Testimonial t={testimonials.snigdha} size="lg" tone="tinted" class="reveal gc-tm" />
-    </div>
-  </section>
-
   <section class="section" data-hide-bar>
     <div class="wrap">
       <div class="gc-cta grain reveal">
@@ -107,8 +98,6 @@ const feels = [
   .rules li { display: flex; gap: 1rem; align-items: flex-start; padding: 1.1rem 1.25rem; border-radius: 1.25rem; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
   .rules li :global(svg) { flex: none; width: 1.4rem; height: 1.4rem; color: var(--violet); margin-top: .15rem; }
   .rules strong { color: var(--ink); }
-
-  :global(.gc-tm) { background: var(--g-dawn) !important; }
 
   .gc-cta { position: relative; overflow: hidden; isolation: isolate; border-radius: clamp(2rem, 4vw, 3rem); background: #F1F7F4; padding: clamp(3rem, 7vw, 5.5rem) clamp(1.5rem, 5vw, 4rem); text-align: center; }
   .gc-cta-inner { position: relative; z-index: 1; display: grid; gap: 1.25rem; justify-items: center; }

@@ -20,9 +20,25 @@ export const testimonials = {
     quote:
       'I have been going to Gitanjali for all my therapy and she’s done a fabulous job in guiding me through my relationship issues and my family connections. I have come out more sorted than before, thanks to her guidance and timely hand-holding.',
   },
+  vishnu: {
+    name: 'Vishnu',
+    context: 'Self-understanding & patterns',
+    excerpt:
+      'It has been very instrumental to understand ourselves better and unlock patterns we can’t easily recognise. Not a transactional service.',
+    quote:
+      'It has been very instrumental to understand ourselves better and unlock patterns we can’t easily recognise. Gitanjali ma’am has been genuinely helpful and she understands the adaptability of approach required in various situations. An amazing lady with genuine care for her patients, and not a transactional service.',
+  },
+  monica: {
+    name: 'Monica',
+    context: 'For her child',
+    excerpt:
+      'Your sessions have helped my child become calmer and manage anger better.',
+    quote:
+      'Thank you so much ma’am for your guidance. Your sessions have helped my child become calmer and manage anger better. My child has learnt to handle his emotions and started reacting patiently in different situations.',
+  },
 } as const;
 
-export const testimonialList = [testimonials.snigdha, testimonials.maithili];
+export const testimonialList = [testimonials.snigdha, testimonials.maithili, testimonials.vishnu, testimonials.monica];
 
 /* Why Samya: what you can expect. */
 export const promises = [

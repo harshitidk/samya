@@ -34,6 +34,7 @@ export const site = {
 
   /* ---- Social. Set to null to hide. ---- */
   instagram: null as string | null,
+  linkedin: 'https://www.linkedin.com/in/gitanjalisood/',
 
   /* ---- Crisis line. Re-verify before launch. ---- */
   crisis: {

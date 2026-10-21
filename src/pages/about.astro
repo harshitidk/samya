@@ -31,6 +31,7 @@ import hands from '../assets/photos/hands-held.jpg';
         <div class="sig glass">
           <span class="sig-name">{site.practitioner}</span>
           <small>Founder, Samya</small>
+          <a href={site.linkedin} target="_blank" rel="noopener" class="sig-li"><Icon name="linkedin" />LinkedIn</a>
         </div>
       </div>
     </div>
@@ -142,6 +143,9 @@ import hands from '../assets/photos/hands-held.jpg';
   .sig { position: absolute; right: -1rem; bottom: 2.5rem; padding: .9rem 1.4rem; border-radius: 1.25rem; animation: float 7s var(--ease-breath) infinite; }
   .sig-name { display: block; font-family: var(--font-display); font-style: italic; font-size: 2rem; line-height: 1; background: var(--g-text); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .1em; }
   .sig small { color: var(--ink-3); font-size: .8125rem; }
+  .sig-li { display: inline-flex; align-items: center; gap: .4rem; margin-top: .5rem; font-size: .8125rem; font-weight: 500; color: var(--violet-deep); text-decoration: none; }
+  .sig-li:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .sig-li :global(svg) { width: 1rem; height: 1rem; }
   @media (min-width: 64rem) { .a-hero-grid { grid-template-columns: 1.15fr .85fr; } .a-visual { justify-self: end; } }
 
   .story-grid { display: grid; gap: 2.5rem; }
@@ -189,6 +193,6 @@ import hands from '../assets/photos/hands-held.jpg';
   .commit-media { aspect-ratio: 1; border-radius: 50%; overflow: hidden; max-width: 24rem; justify-self: center; border: 8px solid rgba(255,255,255,.1); }
   @media (min-width: 60rem) { .commit-grid { grid-template-columns: 1.3fr .7fr; gap: 5rem; } }
 
-  .tm-grid { display: grid; gap: 1.25rem; align-items: start; }
-  @media (min-width: 60rem) { .tm-grid { grid-template-columns: 1.3fr 1fr; } }
+  .tm-grid { display: grid; gap: 1.25rem; align-items: stretch; }
+  @media (min-width: 60rem) { .tm-grid { grid-template-columns: 1fr 1fr; } }
 </style>

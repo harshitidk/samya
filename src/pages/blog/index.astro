@@ -1,0 +1,64 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getPosts, readMinutes, formatDate } from '../../data/blog';
+
+const posts = await getPosts();
+---
+
+<Base og="blog" ogAlt="The words: Notes on grief, family and finding balance." title="Blog" description="Notes from Samya on grief, family, and finding your balance again.">
+  <section class="b-head">
+    <div class="wrap section-head">
+      <p class="eyebrow reveal">Blog</p>
+      <h1 class="h1 reveal" style="--d:60ms">Notes on <em class="grad-text">finding balance.</em></h1>
+    </div>
+  </section>
+
+  <section class="section-tight b-list">
+    <div class="wrap">
+      <ul class="posts">
+        {posts.map((p, i) => (
+          <li class="reveal" style={`--d:${i * 70}ms`}>
+            <a href={`/blog/${p.id}`} class="post">
+              <div class="post-media">
+                <Image src={p.data.photo} alt={p.data.photoAlt} widths={[480, 800]} sizes="(min-width: 60rem) 36vw, 92vw" class="photo-fill" />
+              </div>
+              <div class="post-copy">
+                <p class="meta small">{formatDate(p.data.date)} · {readMinutes(p)} min read</p>
+                <h2 class="h3">{p.data.title}</h2>
+                <p class="muted">{p.data.description}</p>
+                <span class="link-arrow">Read <Icon name="arrow" /></span>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .b-head { padding: clamp(8rem, 14vw, 10rem) 0 0; background: var(--g-soft); }
+  .b-head .section-head { margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .b-list { padding-top: clamp(1.5rem, 3vw, 2.5rem); }
+  .posts { list-style: none; display: grid; gap: 1.5rem; }
+  .post {
+    display: grid; gap: 1.5rem; align-items: center;
+    padding: 1rem; border-radius: var(--r-card);
+    background: var(--surface); border: 1px solid var(--line);
+    text-decoration: none; box-shadow: var(--shadow-soft);
+    transition: box-shadow .3s, transform .3s var(--ease-out);
+  }
+  .post:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); }
+  .post-media { aspect-ratio: 16 / 10; border-radius: calc(var(--r-card) - .5rem); overflow: hidden; }
+  .post-copy { display: grid; gap: .75rem; justify-items: start; padding: 0 .5rem .75rem; }
+  .meta { color: var(--ink-3); }
+  @media (min-width: 52rem) {
+    .post { grid-template-columns: 2fr 3fr; gap: 2.5rem; }
+    .post-copy { padding: 1rem 1.5rem 1rem 0; }
+  }
+</style>

@@ -47,6 +47,11 @@ const config = { endpoint: site.formEndpoint, wa: site.whatsappNumber, name: sit
             <span><strong>{site.email}</strong></span>
             <Icon name="arrow-up-right" class="d-go" />
           </a>
+          <a href={site.linkedin} target="_blank" rel="noopener" class="d-card li">
+            <span class="d-icon"><Icon name="linkedin" /></span>
+            <span><strong>LinkedIn</strong></span>
+            <Icon name="arrow-up-right" class="d-go" />
+          </a>
         </div>
 
 
@@ -194,6 +199,7 @@ const config = { endpoint: site.formEndpoint, wa: site.whatsappNumber, name: sit
   .d-card small { display: block; font-size: .8125rem; color: var(--ink-3); }
   .d-icon { flex: none; width: 2.75rem; height: 2.75rem; border-radius: 50%; display: grid; place-items: center; background: var(--bg-2); color: var(--violet-deep); }
   .wa .d-icon { background: #DFF7E8; color: #0E7A3F; }
+  .li .d-icon { background: #E3EDF8; color: #0A66C2; }
   .d-card :global(.d-go) { color: var(--ink-3); }
   .next { list-style: none; display: grid; gap: .6rem; margin-top: .5rem; color: var(--ink-2); font-size: .9375rem; }
   .next li { display: flex; gap: .75rem; align-items: flex-start; }
