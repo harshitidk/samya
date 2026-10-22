@@ -5,7 +5,7 @@ import { whatsappHref, telHref } from '../config/site';
 <div class="mobile-bar" data-mobile-bar>
   <a href={telHref} class="mb-icon" aria-label="Call"><Icon name="phone" /></a>
   <a href={whatsappHref()} class="mb-icon wa" aria-label="WhatsApp" target="_blank" rel="noopener"><Icon name="whatsapp" /></a>
-  <a href="/contact" class="btn btn-primary mb-book">Book a session</a>
+  <a href={whatsappHref()} class="btn btn-primary mb-book" target="_blank" rel="noopener">Book a session</a>
 </div>
 
 <style>

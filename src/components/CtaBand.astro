@@ -15,7 +15,9 @@ const {
   service,
   colors,
 } = Astro.props;
-const bookHref = service ? `/contact?service=${service}` : '/contact';
+const waHref = service
+  ? whatsappHref(`Hi ${site.practitioner}, I’d like to book a session for ${service.replace(/-/g, ' ')}.`)
+  : whatsappHref();
 ---
 <section class="section cta-section" data-hide-bar>
   <div class="wrap">
@@ -26,8 +28,7 @@ const bookHref = service ? `/contact?service=${service}` : '/contact';
         <h2 class="h1" set:html={title} />
         <p class="lead">{body}</p>
         <div class="btns">
-          <a href={bookHref} class="btn btn-primary">Book a session <Icon name="arrow" /></a>
-          <a href={whatsappHref()} class="btn btn-glass" target="_blank" rel="noopener"><Icon name="whatsapp" />Message on WhatsApp</a>
+          <a href={waHref} class="btn btn-primary" target="_blank" rel="noopener"><Icon name="whatsapp" />Book a session</a>
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ const idx = services.findIndex((x) => x.slug === s.slug);
 const others = [...services.slice(idx + 1), ...services.slice(0, idx)];
 const testimonial = s.testimonial ? testimonials[s.testimonial] : null;
 const auraColors = [t.a, t.b, t.c, t.a, t.b];
-const waText = `Hi ${site.practitioner}, I’m reaching out about ${s.title.toLowerCase()}.`;
+const waText = `Hi ${site.practitioner}, I’d like to book a session for ${s.title}.`;
 
 ---
 
@@ -36,8 +36,7 @@ const waText = `Hi ${site.practitioner}, I’m reaching out about ${s.title.toLo
           <h1 class="h1 reveal" style="--d:60ms">{s.title}</h1>
           <p class="s-tagline reveal" style="--d:120ms">{s.tagline}</p>
           <div class="s-ctas reveal" style="--d:180ms">
-            <a href={`/contact?service=${s.slug}`} class="btn btn-primary">Book a session <Icon name="arrow" /></a>
-            <a href={whatsappHref(waText)} class="btn btn-glass" target="_blank" rel="noopener"><Icon name="whatsapp" />Ask a question</a>
+            <a href={whatsappHref(waText)} class="btn btn-primary" target="_blank" rel="noopener"><Icon name="whatsapp" />Book a session</a>
           </div>
         </div>
         <div class="s-visual reveal" style="--d:140ms">

@@ -9,7 +9,7 @@ import Testimonial from '../components/Testimonial.astro';
 import BreathOrb from '../components/BreathOrb.astro';
 import { services, feelings } from '../data/services';
 import { testimonialList, promises, steps, faqGroups, testimonials } from '../data/content';
-import { site } from '../config/site';
+import { site, whatsappHref } from '../config/site';
 
 import heroPortrait from '../assets/photos/gitanjali-portrait.jpg';
 import tea from '../assets/photos/gitanjali-session.jpg';
@@ -43,7 +43,7 @@ const finderData = Object.fromEntries(
           Counselling, family therapy and grief support with {site.practitioner}.
         </p>
         <div class="hero-ctas reveal" style="--d:240ms">
-          <a href="/contact" class="btn btn-primary">Book a session <Icon name="arrow" /></a>
+          <a href={whatsappHref()} class="btn btn-primary" target="_blank" rel="noopener"><Icon name="whatsapp" />Book a session</a>
           <a href="#finder" class="btn btn-glass">What’s on your mind?</a>
         </div>
       </div>
@@ -68,7 +68,7 @@ const finderData = Object.fromEntries(
 
 
   <!-- ================= FINDER ================= -->
-  <section class="section finder-section" id="finder">
+  <section class="section finder-section" id="finder" data-wa={site.whatsappNumber} data-practitioner={site.practitioner}>
     <div class="wrap finder-grid">
       <div class="finder-copy">
         <h2 class="h2 reveal">What’s weighing on you <em>today?</em></h2>
@@ -89,7 +89,7 @@ const finderData = Object.fromEntries(
           <h3 class="h2" data-fr-title></h3>
           <p class="fr-tagline" data-fr-tagline></p>
           <div class="fr-actions">
-            <a class="btn btn-primary" data-fr-book href="/contact">Book for this <Icon name="arrow" /></a>
+            <a class="btn btn-primary" data-fr-book href={whatsappHref()} target="_blank" rel="noopener"><Icon name="whatsapp" />Book for this</a>
             <a class="link-arrow" data-fr-link href="/services">Read more <Icon name="arrow" /></a>
           </div>
         </div>
@@ -498,6 +498,9 @@ const finderData = Object.fromEntries(
     // ---- Finder ----
     const dataEl = document.getElementById('finder-data');
     const result = document.querySelector<HTMLElement>('[data-finder-result]');
+    const finder = document.getElementById('finder');
+    const waNumber = finder?.dataset.wa || '';
+    const practitioner = finder?.dataset.practitioner || '';
     if (dataEl && result && !result.dataset.ready) {
       result.dataset.ready = '1';
       const data = JSON.parse(dataEl.textContent || '{}');
@@ -514,7 +517,7 @@ const finderData = Object.fromEntries(
         body.style.animation = 'none'; void body.offsetWidth; body.style.animation = '';
         $('[data-fr-title]').textContent = s.title;
         $('[data-fr-tagline]').textContent = s.tagline;
-        (result.querySelector('[data-fr-book]') as HTMLAnchorElement).href = `/contact?service=${slug}&feeling=${encodeURIComponent(b.textContent || '')}`;
+        (result.querySelector('[data-fr-book]') as HTMLAnchorElement).href = `https://wa.me/${waNumber}?text=${encodeURIComponent(`Hi ${practitioner}, I found Samya online and I’d like to talk about ${s.title}.`)}`;
         (result.querySelector('[data-fr-link]') as HTMLAnchorElement).href = `/services/${slug}`;
         result.style.setProperty('--fa', s.theme.a);
         result.style.setProperty('--fb', s.theme.b);

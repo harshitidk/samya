@@ -54,7 +54,7 @@ const links = [
     </nav>
 
     <div class="actions">
-      <a href="/contact" class="btn btn-primary btn-sm book">Book a session</a>
+      <a href={whatsappHref()} class="btn btn-primary btn-sm book" target="_blank" rel="noopener">Book a session</a>
       <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu" data-menu-btn>
         <span></span><span></span>
       </button>
@@ -78,8 +78,7 @@ const links = [
         </ul>
       </nav>
       <div class="mm-cta">
-        <a href="/contact" class="btn btn-primary">Book a session</a>
-        <a href={whatsappHref()} class="btn btn-wa" target="_blank" rel="noopener"><Icon name="whatsapp" />WhatsApp</a>
+        <a href={whatsappHref()} class="btn btn-primary" target="_blank" rel="noopener"><Icon name="whatsapp" />Book a session</a>
       </div>
       <p class="mm-crisis small">In crisis? Call {site.crisis.serviceName} <a href={`tel:${site.crisis.numbers[0]}`}>{site.crisis.numbers[0]}</a>, free and 24×7.</p>
     </div>

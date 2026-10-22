@@ -5,6 +5,7 @@ import Aurora from '../../components/Aurora.astro';
 import Icon from '../../components/Icon.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { services } from '../../data/services';
+import { site, whatsappHref } from '../../config/site';
 ---
 
 <Base og="services" ogAlt="Gitanjali listening in a session, beside the words: How I can help." title="Services"   description="Grief counselling, child and adolescent counselling, family therapy, relationship counselling, existential counselling, anger and emotional regulation, and anxiety and stress counselling at Samya.">
@@ -36,7 +37,7 @@ import { services } from '../../data/services';
             </ul>
             <div class="row-actions reveal">
               <a href={`/services/${s.slug}`} class="btn btn-primary">Explore {s.short.toLowerCase()} <Icon name="arrow" /></a>
-              <a href={`/contact?service=${s.slug}`} class="link-arrow">Book for this <Icon name="arrow" /></a>
+              <a href={whatsappHref(`Hi ${site.practitioner}, I’d like to book a session for ${s.title}.`)} class="link-arrow" target="_blank" rel="noopener">Book for this <Icon name="arrow" /></a>
             </div>
           </div>
         </article>
