@@ -5,10 +5,9 @@ import { spawn } from 'node:child_process';
 import sharp from 'sharp';
 
 const PORT = 4399;
-// Keep in step with src/pages/og-card/[card].astro.
+// Keep in step with src/pages/og-card/[card].astro. Blog posts use their cover photo instead.
 const slugs = ['grief-counselling', 'child-adolescent-counselling', 'family-therapy', 'relationship-counselling', 'existential-counselling', 'anger-emotional-regulation', 'anxiety-stress-counselling'];
-const posts = ['grief-counselling-bereavement-and-loss'];
-const cards = ['default', 'about', 'services', 'contact', 'why-samya', 'grief-circle', 'breathe', 'blog', ...posts.map((p) => `post-${p}`), ...slugs.map((s) => `service-${s}`)];
+const cards = ['default', 'about', 'services', 'contact', 'why-samya', 'grief-circle', 'breathe', 'blog', ...slugs.map((s) => `service-${s}`)];
 
 const dev = spawn('npx', ['astro', 'dev', '--port', String(PORT)], { stdio: 'pipe' });
 await new Promise((res) => dev.stdout.on('data', (d) => String(d).includes('ready') || String(d).includes('Local') ? res() : null));

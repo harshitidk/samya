@@ -2,7 +2,7 @@
 
 The website for Samya, Gitanjali's counselling, family therapy and grief counselling practice.
 
-Astro + a little Tailwind, static output, no tracking. Client-side page transitions via Astro's `ClientRouter`.
+Astro + a little Tailwind, no tracking. Every page is static except the blog, which reads Supabase on request (Vercel adapter). Client-side page transitions via Astro's `ClientRouter`.
 
 ```bash
 npm install
@@ -31,6 +31,23 @@ npm run build    # static site in dist/
 - **Testimonials, promises, education, FAQs, steps**: `src/data/content.ts`. Only add real, consented testimonials.
 - **Design tokens** (colour, type, gradients, motion): `src/styles/tokens.css`
 - **Photos**: `src/assets/photos/` (Unsplash licence, free for commercial use). Astro optimises them at build.
+
+## Blog and admin
+
+Posts live in Supabase, not in the repo. Add and delete them at **`/admin`**, which isn't linked from anywhere on the site.
+It needs an email and password. Images you upload (cover and inside the post) are resized in the browser and stored in the `blog-images` bucket.
+New posts appear on the site within about a minute, with no rebuild.
+
+One-time setup:
+
+1. Supabase → SQL Editor: run `supabase/schema.sql` (creates the tables, image bucket and access rules, and imports the first post).
+2. Supabase → Authentication → Users → **Add user**: enter the admin email and password and tick *Auto confirm*.
+3. In the SQL Editor, make that user an admin:
+   `insert into public.admins (user_id) select id from auth.users where email = 'you@example.com';`
+4. Supabase → Authentication → Sign In / Providers: turn **off** *Allow new users to sign up*.
+5. Vercel → Settings → Environment Variables: add `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_PUBLISHABLE_KEY` (the same values as `.env.local`).
+
+Only accounts in `public.admins` can write. Everyone else, signed in or not, can only read.
 
 ## Swapping in real photos
 

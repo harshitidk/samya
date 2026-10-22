@@ -12,12 +12,15 @@ interface Props {
   hideBar?: boolean;
   /** Name of a card in public/og/ (without .jpg). Defaults to the home card. */
   og?: string;
+  /** An absolute image URL to use instead of a card, e.g. a blog post's cover. */
+  ogImage?: string;
   ogAlt?: string;
 }
 
 const { title, description, og = 'default', ogAlt } = Astro.props;
+const isCard = !Astro.props.ogImage;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
-const ogImage = new URL(`/og/${og}.jpg`, Astro.site ?? site.url).href;
+const ogImage = Astro.props.ogImage ?? new URL(`/og/${og}.jpg`, Astro.site ?? site.url).href;
 const ogImageAlt = ogAlt ?? 'Gitanjali, counsellor at Samya, smiling on a sofa beside the words: A gentle space to find your balance again.';
 const fullTitle = title.includes('Samya') ? title : `${title} · Samya Counselling`;
 
@@ -52,9 +55,9 @@ const schema = {
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:secure_url" content={ogImage} />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    {isCard && <meta property="og:image:type" content="image/jpeg" />}
+    {isCard && <meta property="og:image:width" content="1200" />}
+    {isCard && <meta property="og:image:height" content="630" />}
     <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content="en_IN" />
     <meta property="og:site_name" content="Samya" />

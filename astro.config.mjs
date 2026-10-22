@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import vercel from '@astrojs/vercel';
 
 /* The public address of the site. Link previews (WhatsApp, iMessage, LinkedIn…)
    need absolute image URLs, so this must be the address people actually visit.
@@ -13,6 +14,8 @@ const site =
 
 export default defineConfig({
   site,
+  /* Everything is static except the blog and sitemap, which read Supabase on request. */
+  adapter: vercel(),
   vite: {
     plugins: [tailwindcss()],
   },

@@ -1,0 +1,473 @@
+---
+/* Blog admin. Deliberately not linked from anywhere: reach it by typing /admin.
+   Signing in is Supabase Auth; what a signed-in admin may do is enforced by
+   row-level security in supabase/schema.sql, not by this page. */
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import { services } from '../data/services';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin · Samya</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <!-- Sign in -->
+    <main id="login" class="login" hidden>
+      <form class="card login-card" id="login-form">
+        <Logo />
+        <h1 class="h3">Sign in to manage the blog</h1>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="username" required />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input type="password" name="password" autocomplete="current-password" required />
+        </label>
+        <p class="error small" id="login-error" role="alert"></p>
+        <button class="btn btn-primary" type="submit">Sign in</button>
+      </form>
+    </main>
+
+    <!-- Dashboard -->
+    <div id="app" hidden>
+      <header class="bar">
+        <div class="wrap bar-inner">
+          <a href="/blog" target="_blank" rel="noopener" aria-label="Open the blog"><Logo /></a>
+          <div class="bar-right">
+            <span class="small muted" id="who"></span>
+            <button class="btn btn-ghost btn-sm" id="sign-out" type="button">Sign out</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="wrap dash">
+        <section class="card editor" aria-labelledby="new-title">
+          <h1 class="h2" id="new-title">New post</h1>
+          <form id="post-form" novalidate>
+            <label class="field">
+              <span>Title</span>
+              <input name="title" required maxlength="160" />
+            </label>
+            <label class="field">
+              <span>Web address</span>
+              <div class="slug"><span class="muted">/blog/</span><input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" /></div>
+            </label>
+            <label class="field">
+              <span>Short description <em class="muted">· shown under the title and in link previews</em></span>
+              <textarea name="description" rows="2" required maxlength="300"></textarea>
+            </label>
+            <div class="row">
+              <label class="field">
+                <span>Date</span>
+                <input type="date" name="published_on" required />
+              </label>
+              <label class="field">
+                <span>Related service <em class="muted">· optional</em></span>
+                <select name="service">
+                  <option value="">None</option>
+                  {services.map((s) => <option value={s.slug}>{s.title}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <fieldset class="field cover">
+              <legend>Cover photo</legend>
+              <label class="drop" id="cover-drop">
+                <input type="file" accept="image/jpeg,image/png,image/webp" id="cover-input" class="sr-only" />
+                <img id="cover-preview" alt="" hidden />
+                <span id="cover-hint">Choose a photo</span>
+              </label>
+              <label class="field">
+                <span>Describe the photo <em class="muted">· for screen readers</em></span>
+                <input name="cover_alt" required maxlength="200" />
+              </label>
+            </fieldset>
+
+            <div class="field">
+              <div class="content-head">
+                <span id="content-label">Post</span>
+                <div class="tools" role="toolbar" aria-label="Formatting">
+                  <button type="button" data-wrap="**" title="Bold"><strong>B</strong></button>
+                  <button type="button" data-wrap="*" title="Italic"><em>I</em></button>
+                  <button type="button" data-line="## " title="Heading">H</button>
+                  <button type="button" data-line="- " title="List">• List</button>
+                  <button type="button" data-line="> " title="Quote">“ Quote</button>
+                  <label class="tool-img" title="Upload an image into the post">
+                    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" id="inline-input" class="sr-only" />
+                    + Image
+                  </label>
+                  <button type="button" id="preview-toggle" aria-pressed="false">Preview</button>
+                </div>
+              </div>
+              <textarea name="content" rows="18" required aria-labelledby="content-label" placeholder="Start writing… A blank line starts a new paragraph."></textarea>
+              <div class="prose-preview" id="preview" hidden></div>
+            </div>
+
+            <p class="error small" id="post-error" role="alert"></p>
+            <div class="actions">
+              <span class="small muted" id="post-status" role="status"></span>
+              <button class="btn btn-primary" type="submit" id="publish">Publish</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="card list" aria-labelledby="list-title">
+          <h2 class="h3" id="list-title">Posts</h2>
+          <ul id="posts"></ul>
+        </aside>
+      </main>
+    </div>
+
+    <script>
+      import { marked } from 'marked';
+      import { adminClient, BLOG_BUCKET } from '../lib/supabase';
+      import type { Post } from '../data/blog';
+
+      const db = adminClient();
+      const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector(sel) as T;
+
+      const loginView = $('#login');
+      const appView = $('#app');
+      const loginForm = $<HTMLFormElement>('#login-form');
+      const loginError = $('#login-error');
+      const form = $<HTMLFormElement>('#post-form');
+      const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
+      const content = field('content') as unknown as HTMLTextAreaElement;
+      const postError = $('#post-error');
+      const postStatus = $('#post-status');
+      const list = $<HTMLUListElement>('#posts');
+
+      /* ---------- Session ---------- */
+
+      async function show() {
+        const { data } = await db.auth.getSession();
+        const session = data.session;
+        if (session) {
+          const { data: isAdmin } = await db.rpc('is_admin');
+          if (!isAdmin) {
+            await db.auth.signOut();
+            loginError.textContent = 'This account can’t manage the blog.';
+            return show();
+          }
+          $('#who').textContent = session.user.email ?? '';
+          loginView.hidden = true;
+          appView.hidden = false;
+          resetForm();
+          loadPosts();
+        } else {
+          appView.hidden = true;
+          loginView.hidden = false;
+        }
+      }
+
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        loginError.textContent = '';
+        const fd = new FormData(loginForm);
+        const button = loginForm.querySelector('button')!;
+        button.disabled = true;
+        const { error } = await db.auth.signInWithPassword({ email: String(fd.get('email')), password: String(fd.get('password')) });
+        button.disabled = false;
+        if (error) { loginError.textContent = 'That email and password don’t match.'; return; }
+        loginForm.reset();
+        show();
+      });
+
+      $('#sign-out').addEventListener('click', async () => { await db.auth.signOut(); show(); });
+
+      /* ---------- Posts list ---------- */
+
+      async function loadPosts() {
+        const { data, error } = await db.from('posts').select('id, slug, title, published_on').order('published_on', { ascending: false });
+        list.replaceChildren();
+        if (error) { list.append(item('Couldn’t load posts: ' + error.message)); return; }
+        if (!data.length) { list.append(item('No posts yet.')); return; }
+        for (const p of data as Pick<Post, 'id' | 'slug' | 'title' | 'published_on'>[]) {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = `/blog/${p.slug}`;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = p.title;
+          const date = document.createElement('span');
+          date.className = 'small muted';
+          date.textContent = new Date(p.published_on).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'del small';
+          del.textContent = 'Delete';
+          del.addEventListener('click', () => deletePost(p, del));
+          const text = document.createElement('div');
+          text.append(a, date);
+          li.append(text, del);
+          list.append(li);
+        }
+      }
+
+      const item = (text: string) => Object.assign(document.createElement('li'), { className: 'muted small', textContent: text });
+
+      async function deletePost(p: Pick<Post, 'id' | 'title'>, button: HTMLButtonElement) {
+        if (!confirm(`Delete “${p.title}”? This can’t be undone.`)) return;
+        button.disabled = true;
+        const { error } = await db.from('posts').delete().eq('id', p.id);
+        if (error) { alert('Couldn’t delete: ' + error.message); button.disabled = false; return; }
+        // Its images live in a folder named after the post.
+        const { data: files } = await db.storage.from(BLOG_BUCKET).list(p.id);
+        if (files?.length) await db.storage.from(BLOG_BUCKET).remove(files.map((f) => `${p.id}/${f.name}`));
+        loadPosts();
+      }
+
+      /* ---------- New post ---------- */
+
+      // Chosen up front so images uploaded while writing land in this post's folder.
+      let postId = crypto.randomUUID();
+      let coverUrl = '';
+      let slugTouched = false;
+
+      const slugify = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+
+      function resetForm() {
+        form.reset();
+        postId = crypto.randomUUID();
+        coverUrl = '';
+        slugTouched = false;
+        field('published_on').value = new Date().toLocaleDateString('en-CA');
+        $<HTMLImageElement>('#cover-preview').hidden = true;
+        $('#cover-hint').textContent = 'Choose a photo';
+        setPreview(false);
+      }
+
+      field('title').addEventListener('input', () => { if (!slugTouched) field('slug').value = slugify(field('title').value); });
+      field('slug').addEventListener('input', () => { slugTouched = true; });
+
+      /** Large photos are scaled to 2000px wide and saved as JPEG, so pages stay quick. GIFs are left alone. */
+      async function shrink(file: File): Promise<Blob> {
+        if (file.type === 'image/gif') return file;
+        const bmp = await createImageBitmap(file);
+        const scale = Math.min(1, 2000 / bmp.width);
+        if (scale === 1 && file.size < 500_000) return file;
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(bmp.width * scale);
+        canvas.height = Math.round(bmp.height * scale);
+        const ctx = canvas.getContext('2d')!;
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+        return new Promise((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('Could not read that image'))), 'image/jpeg', 0.85));
+      }
+
+      async function upload(file: File): Promise<string> {
+        const blob = await shrink(file);
+        const ext = blob.type === 'image/jpeg' ? 'jpg' : blob.type.split('/')[1];
+        const base = slugify(file.name.replace(/\.[^.]+$/, '')) || 'image';
+        const path = `${postId}/${Date.now()}-${base}.${ext}`;
+        const { error } = await db.storage.from(BLOG_BUCKET).upload(path, blob, { contentType: blob.type, cacheControl: '31536000' });
+        if (error) throw error;
+        return db.storage.from(BLOG_BUCKET).getPublicUrl(path).data.publicUrl;
+      }
+
+      $<HTMLInputElement>('#cover-input').addEventListener('change', async (e) => {
+        const input = e.currentTarget as HTMLInputElement;
+        const file = input.files?.[0];
+        if (!file) return;
+        const hint = $('#cover-hint');
+        hint.textContent = 'Uploading…';
+        try {
+          coverUrl = await upload(file);
+          const img = $<HTMLImageElement>('#cover-preview');
+          img.src = coverUrl;
+          img.hidden = false;
+          hint.textContent = 'Change photo';
+        } catch (err) {
+          hint.textContent = 'Upload failed: ' + (err as Error).message;
+        }
+        input.value = '';
+      });
+
+      $<HTMLInputElement>('#inline-input').addEventListener('change', async (e) => {
+        const input = e.currentTarget as HTMLInputElement;
+        const file = input.files?.[0];
+        if (!file) return;
+        const marker = `![Uploading ${file.name}…]()`;
+        insertAtCursor(`\n\n${marker}\n\n`);
+        try {
+          const url = await upload(file);
+          const alt = prompt('Describe this image (for screen readers):', '') ?? '';
+          content.value = content.value.replace(marker, `![${alt.replace(/[[\]]/g, '')}](${url})`);
+        } catch (err) {
+          content.value = content.value.replace(marker, '');
+          alert('Upload failed: ' + (err as Error).message);
+        }
+        input.value = '';
+      });
+
+      /* ---------- Formatting toolbar ---------- */
+
+      function insertAtCursor(text: string) {
+        const { selectionStart: s, selectionEnd: end, value } = content;
+        content.value = value.slice(0, s) + text + value.slice(end);
+        content.selectionStart = content.selectionEnd = s + text.length;
+        content.focus();
+      }
+
+      document.querySelectorAll<HTMLButtonElement>('[data-wrap]').forEach((b) =>
+        b.addEventListener('click', () => {
+          const mark = b.dataset.wrap!;
+          const { selectionStart: s, selectionEnd: end, value } = content;
+          const picked = value.slice(s, end) || 'text';
+          content.value = value.slice(0, s) + mark + picked + mark + value.slice(end);
+          content.setSelectionRange(s + mark.length, s + mark.length + picked.length);
+          content.focus();
+        }),
+      );
+
+      document.querySelectorAll<HTMLButtonElement>('[data-line]').forEach((b) =>
+        b.addEventListener('click', () => {
+          const prefix = b.dataset.line!;
+          const { selectionStart: s, selectionEnd: end, value } = content;
+          const lineStart = value.lastIndexOf('\n', s - 1) + 1;
+          const lines = value.slice(lineStart, end).split('\n').map((l) => prefix + l).join('\n');
+          content.value = value.slice(0, lineStart) + lines + value.slice(end);
+          content.selectionStart = content.selectionEnd = lineStart + lines.length;
+          content.focus();
+        }),
+      );
+
+      const toggle = $<HTMLButtonElement>('#preview-toggle');
+      function setPreview(on: boolean) {
+        toggle.setAttribute('aria-pressed', String(on));
+        toggle.textContent = on ? 'Edit' : 'Preview';
+        content.hidden = on;
+        const preview = $('#preview');
+        preview.hidden = !on;
+        if (on) preview.innerHTML = marked.parse(content.value || '*Nothing written yet.*', { async: false });
+      }
+      toggle.addEventListener('click', () => setPreview(toggle.getAttribute('aria-pressed') !== 'true'));
+
+      /* ---------- Publish ---------- */
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        postError.textContent = '';
+        setPreview(false);
+        if (!coverUrl) { postError.textContent = 'Please add a cover photo.'; return; }
+        if (!form.reportValidity()) return;
+
+        const publish = $<HTMLButtonElement>('#publish');
+        publish.disabled = true;
+        const slug = field('slug').value;
+        const { error } = await db.from('posts').insert({
+          id: postId,
+          slug,
+          title: field('title').value.trim(),
+          description: field('description').value.trim(),
+          content: content.value.trim(),
+          cover_url: coverUrl,
+          cover_alt: field('cover_alt').value.trim(),
+          service: field('service').value || null,
+          published_on: field('published_on').value,
+        });
+        publish.disabled = false;
+        if (error) {
+          postError.textContent = error.code === '23505' ? `There’s already a post at /blog/${slug}. Pick a different web address.` : 'Couldn’t publish: ' + error.message;
+          return;
+        }
+        resetForm();
+        postStatus.innerHTML = '';
+        postStatus.append('Published. ', Object.assign(document.createElement('a'), { href: `/blog/${slug}`, target: '_blank', textContent: 'View post' }));
+        loadPosts();
+      });
+
+      // Don't lose a half-written post to a stray refresh.
+      window.addEventListener('beforeunload', (e) => {
+        if (!appView.hidden && (content.value.trim() || field('title').value.trim())) e.preventDefault();
+      });
+
+      show();
+    </script>
+  </body>
+</html>
+
+<style>
+  body { background: var(--g-soft); min-height: 100dvh; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); box-shadow: var(--shadow-soft); padding: clamp(1.25rem, 3vw, 2rem); }
+  .muted em, em.muted { font-style: normal; }
+  .error { color: var(--warm-700); min-height: 1lh; }
+  .error:empty { min-height: 0; }
+
+  .login { min-height: 100dvh; display: grid; place-items: center; padding: 1rem; }
+  .login-card { width: min(100%, 26rem); display: grid; gap: 1.1rem; }
+  .login-card .btn { justify-self: stretch; }
+
+  .bar { position: sticky; top: 0; z-index: 10; background: rgba(247, 249, 247, .85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .bar-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; }
+  .bar-right { display: flex; align-items: center; gap: 1rem; }
+  .bar a { text-decoration: none; color: var(--ink); }
+
+  .dash { display: grid; gap: 1.5rem; padding-block: 2rem 4rem; align-items: start; }
+  @media (min-width: 64rem) { .dash { grid-template-columns: minmax(0, 1fr) 20rem; } .list { position: sticky; top: 5.5rem; } }
+  @media (max-width: 40rem) { #who { display: none; } }
+
+  .editor form { display: grid; gap: 1.25rem; margin-top: 1.5rem; }
+  .field { display: grid; gap: .45rem; border: 0; padding: 0; min-width: 0; }
+  .field > span, legend, .content-head > span { font-size: var(--fs-small); font-weight: 500; color: var(--ink); }
+  legend { margin-bottom: .45rem; }
+  input:not([type='file']), textarea, select {
+    font: inherit; color: var(--ink); width: 100%;
+    padding: .7rem .9rem; border-radius: .9rem;
+    border: 1.5px solid var(--line-strong); background: var(--surface);
+  }
+  input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--calm-600); outline-offset: 1px; border-color: transparent; }
+  textarea { resize: vertical; line-height: 1.6; }
+  textarea[name='content'] { font-size: 1rem; min-height: 22rem; }
+  .row { display: grid; gap: 1.25rem; }
+  @media (min-width: 40rem) { .row { grid-template-columns: 1fr 1fr; } }
+  .slug { display: flex; align-items: center; gap: .25rem; }
+
+  .cover { gap: .9rem; }
+  .drop {
+    display: grid; place-items: center; aspect-ratio: 21 / 9; overflow: hidden; position: relative; cursor: pointer;
+    border-radius: var(--r-card); border: 1.5px dashed var(--line-strong); background: var(--g-dawn);
+    color: var(--calm-700); font-weight: 500;
+  }
+  .drop:focus-within { outline: 2px solid var(--calm-600); outline-offset: 2px; }
+  .drop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .drop img:not([hidden]) + span { position: relative; background: rgba(255,255,255,.9); padding: .4rem .9rem; border-radius: var(--r-pill); font-size: var(--fs-small); }
+
+  .content-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; }
+  .tools { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .tools button, .tool-img {
+    font: inherit; font-size: .875rem; color: var(--ink); cursor: pointer;
+    min-height: 2.25rem; padding: 0 .75rem; display: inline-flex; align-items: center;
+    border-radius: var(--r-pill); border: 1px solid var(--line-strong); background: var(--surface);
+  }
+  .tools button:hover, .tool-img:hover { background: var(--calm-50); }
+  .tool-img { background: var(--calm-100); border-color: transparent; color: var(--calm-700); font-weight: 500; }
+  .tool-img:focus-within { outline: 2px solid var(--calm-600); }
+  #preview-toggle[aria-pressed='true'] { background: var(--ink); color: #fff; }
+
+  .prose-preview { min-height: 22rem; padding: 1rem 1.25rem; border-radius: .9rem; border: 1.5px solid var(--line); display: grid; gap: 1rem; align-content: start; color: var(--ink-2); }
+  .prose-preview :global(h2) { font-family: var(--font-display); font-weight: 360; font-size: var(--fs-h3); color: var(--ink); }
+  .prose-preview :global(img) { width: 100%; border-radius: 1rem; }
+  .prose-preview :global(ul) { padding-left: 1.25rem; }
+  .prose-preview :global(blockquote) { border-left: 2px solid var(--calm-300); padding-left: 1rem; font-style: italic; }
+
+  .actions { display: flex; align-items: center; justify-content: flex-end; gap: 1rem; flex-wrap: wrap; }
+  .actions a { color: var(--calm-700); }
+
+  .list ul { list-style: none; display: grid; margin-top: 1rem; }
+  .list li { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding-block: .85rem; border-top: 1px solid var(--line); }
+  .list li > div { display: grid; gap: .15rem; min-width: 0; }
+  .list li a { color: var(--ink); text-decoration: none; font-weight: 500; line-height: 1.35; }
+  .list li a:hover { text-decoration: underline; }
+  .del { flex: none; font: inherit; font-size: .875rem; color: var(--warm-700); background: var(--warm-50); border: 0; border-radius: var(--r-pill); padding: .4rem .8rem; cursor: pointer; }
+  .del:hover { background: var(--warm-100); }
+  .del:disabled { opacity: .5; }
+</style>

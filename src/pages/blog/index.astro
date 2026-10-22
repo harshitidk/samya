@@ -1,11 +1,13 @@
 ---
-import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { getPosts, readMinutes, formatDate } from '../../data/blog';
+import { getPosts, readMinutes, formatDate, CACHE } from '../../data/blog';
+
+export const prerender = false;
 
 const posts = await getPosts();
+Astro.response.headers.set('Cache-Control', CACHE);
 ---
 
 <Base og="blog" ogAlt="The words: Notes on grief, family and finding balance." title="Blog" description="Notes from Samya on grief, family, and finding your balance again.">
@@ -21,20 +23,21 @@ const posts = await getPosts();
       <ul class="posts">
         {posts.map((p, i) => (
           <li class="reveal" style={`--d:${i * 70}ms`}>
-            <a href={`/blog/${p.id}`} class="post">
+            <a href={`/blog/${p.slug}`} class="post">
               <div class="post-media">
-                <Image src={p.data.photo} alt={p.data.photoAlt} widths={[480, 800]} sizes="(min-width: 60rem) 36vw, 92vw" class="photo-fill" />
+                <img src={p.cover_url} alt={p.cover_alt} class="photo-fill" loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
               </div>
               <div class="post-copy">
-                <p class="meta small">{formatDate(p.data.date)} · {readMinutes(p)} min read</p>
-                <h2 class="h3">{p.data.title}</h2>
-                <p class="muted">{p.data.description}</p>
+                <p class="meta small">{formatDate(p.published_on)} · {readMinutes(p)} min read</p>
+                <h2 class="h3">{p.title}</h2>
+                <p class="muted">{p.description}</p>
                 <span class="link-arrow">Read <Icon name="arrow" /></span>
               </div>
             </a>
           </li>
         ))}
       </ul>
+      {posts.length === 0 && <p class="muted">New notes are on their way.</p>}
     </div>
   </section>
 

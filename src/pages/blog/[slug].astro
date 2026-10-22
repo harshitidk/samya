@@ -1,40 +1,39 @@
 ---
-import { Image } from 'astro:assets';
-import { render } from 'astro:content';
+import { marked } from 'marked';
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { site } from '../../config/site';
 import { services } from '../../data/services';
-import { getPosts, readMinutes, formatDate, type Post } from '../../data/blog';
+import { getPost, readMinutes, formatDate, CACHE } from '../../data/blog';
 
-export async function getStaticPaths() {
-  return (await getPosts()).map((post) => ({ params: { slug: post.id }, props: { post } }));
-}
+export const prerender = false;
 
-const { post } = Astro.props as { post: Post };
-const { Content } = await render(post);
-const service = services.find((s) => s.slug === post.data.service);
-const ogCard = `post-${post.id}`;
+const post = await getPost(Astro.params.slug ?? '');
+if (!post) return Astro.rewrite('/404');
+Astro.response.headers.set('Cache-Control', CACHE);
+
+// Written in /admin by signed-in admins only, so the Markdown is trusted.
+const html = await marked.parse(post.content.trim());
+const service = services.find((s) => s.slug === post.service);
+const ogImage = new URL(post.cover_url, Astro.site ?? site.url).href;
 ---
 
-<Base og={ogCard} ogAlt={`${post.data.photoAlt}, beside the words: ${post.data.title}`} title={post.data.title} description={post.data.description}>
+<Base ogImage={ogImage} ogAlt={post.cover_alt} title={post.title} description={post.description}>
   <article>
     <header class="a-head">
       <div class="wrap-narrow a-head-inner">
         <a href="/blog" class="back small reveal"><Icon name="arrow-left" />All posts</a>
-        <h1 class="h1 reveal" style="--d:60ms">{post.data.title}</h1>
-        <p class="lead reveal" style="--d:120ms">{post.data.description}</p>
-        <p class="meta small reveal" style="--d:180ms">By {site.practitioner} · {formatDate(post.data.date)} · {readMinutes(post)} min read</p>
+        <h1 class="h1 reveal" style="--d:60ms">{post.title}</h1>
+        <p class="lead reveal" style="--d:120ms">{post.description}</p>
+        <p class="meta small reveal" style="--d:180ms">By {site.practitioner} · {formatDate(post.published_on)} · {readMinutes(post)} min read</p>
       </div>
       <div class="wrap a-photo reveal" style="--d:220ms">
-        <Image src={post.data.photo} alt={post.data.photoAlt} widths={[800, 1400, 2000]} sizes="(min-width: 76rem) 76rem, 100vw" class="photo-fill" loading="eager" />
+        <img src={post.cover_url} alt={post.cover_alt} class="photo-fill" loading="eager" fetchpriority="high" />
       </div>
     </header>
 
-    <div class="wrap-narrow prose">
-      <Content />
-    </div>
+    <div class="wrap-narrow prose" set:html={html} />
 
     {service && (
       <aside class="wrap-narrow next">
@@ -71,6 +70,8 @@ const ogCard = `post-${post.id}`;
   .prose :global(a) { color: var(--violet-deep); text-decoration-thickness: 1px; text-underline-offset: 3px; }
   .prose :global(ul) { list-style: none; display: grid; gap: .65rem; }
   .prose :global(li) { position: relative; padding-left: 1.6rem; }
+  .prose :global(img) { width: 100%; height: auto; border-radius: var(--r-photo); margin-block: .75rem; }
+  .prose :global(blockquote) { font-family: var(--font-display); font-style: italic; font-size: var(--fs-h3); line-height: 1.4; color: var(--ink); padding-left: 1.25rem; border-left: 2px solid var(--calm-300); }
   .prose :global(li)::before {
     content: ''; position: absolute; left: .2rem; top: .7em; width: .5rem; height: .5rem; border-radius: 50%;
     background: linear-gradient(135deg, var(--calm-300), var(--warm-300));

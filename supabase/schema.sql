@@ -1,12 +1,53 @@
----
-title: 'Grief Counselling: Working Through Bereavement and Loss'
-description: 'How to cope with the loss of a loved one. Grief is a journey, not a destination.'
-date: 2026-10-22
-photo: ../../assets/photos/calm-sea.jpg
-photoAlt: 'A calm, still sea under a soft sky'
-service: grief-counselling
----
+-- Samya blog: run this once in Supabase → SQL Editor.
+-- Anyone can read posts; only users listed in public.admins can add or delete them.
 
+create table public.posts (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
+  title text not null,
+  description text not null,
+  content text not null,          -- Markdown
+  cover_url text not null,
+  cover_alt text not null default '',
+  service text,                   -- service slug, for the closing card
+  published_on date not null default current_date,
+  created_at timestamptz not null default now()
+);
+
+-- Who may manage the blog. No policies, so it is invisible to the public API.
+create table public.admins (
+  user_id uuid primary key references auth.users on delete cascade
+);
+alter table public.admins enable row level security;
+
+create function public.is_admin() returns boolean
+language sql stable security definer set search_path = ''
+as $$ select exists (select 1 from public.admins where user_id = auth.uid()) $$;
+
+alter table public.posts enable row level security;
+create policy "Anyone can read posts" on public.posts for select using (true);
+create policy "Admins can add posts" on public.posts for insert to authenticated with check (public.is_admin());
+create policy "Admins can update posts" on public.posts for update to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "Admins can delete posts" on public.posts for delete to authenticated using (public.is_admin());
+
+-- Images: public to read, admins only to upload or remove. 5 MB each.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('blog-images', 'blog-images', true, 5242880, array['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+
+create policy "Admins can list blog images" on storage.objects for select to authenticated using (bucket_id = 'blog-images' and public.is_admin());
+create policy "Admins can upload blog images" on storage.objects for insert to authenticated with check (bucket_id = 'blog-images' and public.is_admin());
+create policy "Admins can delete blog images" on storage.objects for delete to authenticated using (bucket_id = 'blog-images' and public.is_admin());
+
+-- The post that used to live in src/content/blog/.
+insert into public.posts (slug, title, description, cover_url, cover_alt, service, published_on, content) values (
+  'grief-counselling-bereavement-and-loss',
+  'Grief Counselling: Working Through Bereavement and Loss',
+  'How to cope with the loss of a loved one. Grief is a journey, not a destination.',
+  '/images/blog/calm-sea.jpg',
+  'A calm, still sea under a soft sky',
+  'grief-counselling',
+  '2026-10-22',
+$post$
 Grief is a journey, not a destination to reach.
 
 So, is there a right way to grieve? And how can you feel supported on your journey through grief?
@@ -113,3 +154,8 @@ Grief counselling offers a space where you can bring your whole experience: the 
 You don’t have to make sense of everything at once. You don’t have to be strong all the time. And you don’t have to navigate this journey alone.
 
 Sometimes, healing begins not with finding an answer, but with having a safe space where you can be exactly as you are.
+$post$
+);
+
+-- Finally, make yourself an admin (after creating your user under Authentication → Users):
+-- insert into public.admins (user_id) select id from auth.users where email = 'you@example.com';

@@ -6,7 +6,6 @@ import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import Logo from '../../components/Logo.astro';
 import { services } from '../../data/services';
-import { getPosts } from '../../data/blog';
 import { site } from '../../config/site';
 import portrait from '../../assets/photos/gitanjali-portrait.jpg';
 import chair from '../../assets/photos/gitanjali-chair.jpg';
@@ -27,7 +26,6 @@ interface Card {
   deva?: boolean;
 }
 
-const posts = await getPosts();
 const calm: [string, string, string] = ['#DDEFE8', '#F6F9F7', '#FBE6DC'];
 const cards: Card[] = [
   { card: 'default', title: 'A gentle space to find your <em>balance</em> again.', sub: `Counselling, family therapy and grief support with ${site.practitioner}`, photo: portrait, pos: '50% 20%', colors: calm, accent: '#2D6A5F' },
@@ -38,7 +36,6 @@ const cards: Card[] = [
   { card: 'grief-circle', title: 'You don’t have to grieve <em>alone.</em>', sub: 'A small, informal and free grief circle at Samya', photo: hands, colors: ['#DCE8F4', '#F7F9F7', '#FBEDE6'], accent: '#3E5F7C' },
   { card: 'breathe', title: 'Slow down. <em>Just this breath.</em>', sub: 'A free one-minute breathing companion', colors: calm, accent: '#2D6A5F' },
   { card: 'blog', title: 'Notes on <em>finding balance.</em>', sub: 'On grief, family and feeling a little lighter', photo: journal, colors: calm, accent: '#2D6A5F' },
-  ...posts.map((p) => ({ card: `post-${p.id}`, title: p.data.title, sub: `By ${site.practitioner}`, photo: p.data.photo, colors: calm, accent: '#2D6A5F' })),
   ...services.map((s) => ({
     card: `service-${s.slug}`,
     title: s.title,
@@ -52,8 +49,7 @@ const cards: Card[] = [
 
 export async function getStaticPaths() {
   if (!import.meta.env.DEV) return [];
-  const posts = await getPosts();
-  const names = ['default', 'about', 'services', 'contact', 'why-samya', 'grief-circle', 'breathe', 'blog', ...posts.map((p) => `post-${p.id}`), ...services.map((s) => `service-${s.slug}`)];
+  const names = ['default', 'about', 'services', 'contact', 'why-samya', 'grief-circle', 'breathe', 'blog', ...services.map((s) => `service-${s.slug}`)];
   return names.map((card) => ({ params: { card } }));
 }
 
