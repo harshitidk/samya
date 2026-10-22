@@ -92,7 +92,7 @@ export const services: Service[] = [
     slug: 'family-therapy',
     title: 'Family Therapy',
     short: 'Family therapy',
-    tagline: 'Not who’s to blame. How we relate.',
+    tagline: 'Finding new ways to listen, understand and grow together as a family.',
     teaser: 'Seeing the whole family, not one problem.',
     // Hearth: the warm pole, softened by calm.
     theme: { a: '#FBE3D9', b: '#F6D3C6', c: '#E4F1EB', accent: '#A04A57', ink: '#3E1E24' },
