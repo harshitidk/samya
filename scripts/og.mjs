@@ -6,7 +6,7 @@ import sharp from 'sharp';
 
 const PORT = 4399;
 // Keep in step with src/pages/og-card/[card].astro.
-const slugs = ['grief-counselling', 'child-adolescent-counselling', 'family-therapy', 'existential-counselling', 'anger-emotional-regulation', 'anxiety-stress-counselling'];
+const slugs = ['grief-counselling', 'child-adolescent-counselling', 'family-therapy', 'relationship-counselling', 'existential-counselling', 'anger-emotional-regulation', 'anxiety-stress-counselling'];
 const posts = ['grief-counselling-bereavement-and-loss'];
 const cards = ['default', 'about', 'services', 'contact', 'why-samya', 'grief-circle', 'breathe', 'blog', ...posts.map((p) => `post-${p}`), ...slugs.map((s) => `service-${s}`)];
 

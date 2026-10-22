@@ -19,11 +19,11 @@ export const site = {
   url: 'https://samya.in',
 
   /* ---- Contact. PLACEHOLDER: all need real values. ---- */
-  phoneDisplay: '+91 98765 43210',
-  phoneHref: '+919876543210',
-  whatsappNumber: '919876543210',
+  phoneDisplay: '+91 99101 23155',
+  phoneHref: '+919910123155',
+  whatsappNumber: '919910123155',
   whatsappMessage: 'Hi Gitanjali, I found Samya online and would like to talk.',
-  email: 'hello@samya.in',
+  email: 'gitanjalisood77@gmail.com',
 
   /* ---- Practice details. PLACEHOLDER: confirm with Gitanjali. ---- */
   modes: 'Online across India, and in person in Delhi NCR',
@@ -33,7 +33,7 @@ export const site = {
   replyTime: 'within a day',
 
   /* ---- Social. Set to null to hide. ---- */
-  instagram: null as string | null,
+  instagram: 'https://www.instagram.com/samyabygitanjali',
   linkedin: 'https://www.linkedin.com/in/gitanjalisood/',
 
   /* ---- Crisis line. Re-verify before launch. ---- */

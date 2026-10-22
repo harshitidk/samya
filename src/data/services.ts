@@ -10,6 +10,7 @@ import wave from '../assets/photos/pink-wave.jpg';
 import calmSea from '../assets/photos/calm-sea.jpg';
 import breathing from '../assets/photos/woman-breathing.jpg';
 import handsWarm from '../assets/photos/hands-warm.jpg';
+import handsHeld from '../assets/photos/hands-held.jpg';
 
 export interface Service {
   slug: string;
@@ -118,6 +119,33 @@ export const services: Service[] = [
     testimonial: 'maithili',
   },
   {
+    slug: 'relationship-counselling',
+    title: 'Relationship Counselling',
+    short: 'Relationships',
+    tagline: 'When relationships feel difficult, there is room to begin again.',
+    teaser: 'Finding a way forward, together.',
+    // Rose meets calm: warmth with room to breathe.
+    theme: { a: '#F8DCE2', b: '#EAD3E2', c: '#E3F0E9', accent: '#9C4A6E', ink: '#3A2130' },
+    photo: handsHeld,
+    photoAlt: 'Two hands clasped together in comfort',
+    photo2: calmSea,
+    photo2Alt: 'A still, pale sea meeting a soft horizon',
+    intro:
+      'Relationships can hold our deepest belonging and our deepest hurt. A safe, non-judgemental space to understand what is happening and find healthier ways of relating.',
+    listHeading: 'I offer support with',
+    list: [
+      'Navigating break-ups, separation and divorce',
+      'Fertility-related emotional challenges',
+      'Conflict with in-laws and extended family',
+      'Pre-marital counselling and preparing for marriage',
+      'Healing from childhood wounds and unresolved family conflict',
+      'Estrangement or difficult relationships between adult children and parents',
+      'Separation or emotional distance between partners',
+      'Relationships affected by a lack of emotional or physical intimacy',
+    ],
+    aim: 'Not always about “fixing” a relationship — sometimes it’s understanding yourself, setting boundaries, and moving forward with clarity.',
+  },
+  {
     slug: 'existential-counselling',
     title: 'Existential Counselling',
     short: 'Life transitions & meaning',
@@ -198,6 +226,7 @@ export const feelings = [
   { label: 'I’ve lost someone', service: 'grief-counselling' },
   { label: 'My child is struggling', service: 'child-adolescent-counselling' },
   { label: 'Our family keeps clashing', service: 'family-therapy' },
+  { label: 'My relationship is struggling', service: 'relationship-counselling' },
   { label: 'I feel lost', service: 'existential-counselling' },
   { label: 'My anger worries me', service: 'anger-emotional-regulation' },
   { label: 'I can’t switch off', service: 'anxiety-stress-counselling' },

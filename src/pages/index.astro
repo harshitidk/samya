@@ -19,8 +19,8 @@ const faqPreview = [faqGroups[0].items[0], faqGroups[1].items[0], faqGroups[2].i
 const marquee = ['Grief & loss', 'Family therapy', 'Children & teens', 'Anxiety & stress', 'Anger & emotions', 'Life transitions', 'Estrangement', 'Separation & divorce', 'Chronic illness', 'Self-esteem & identity'];
 
 /* Bento placement on the six-column grid, in service order. */
-const spans = ['s4', 's2', 's2', 's4', 's3', 's3'];
-const serviceIcons = ['feather', 'child', 'users', 'compass', 'wave', 'wind'];
+const spans = ['s4', 's2', 's2', 's4', 's3', 's3', 's6'];
+const serviceIcons = ['feather', 'child', 'users', 'heart', 'compass', 'wave', 'wind'];
 
 const finderData = Object.fromEntries(
   services.map((s) => [s.slug, { title: s.title, tagline: s.tagline, teaser: s.teaser, theme: s.theme }]),
@@ -399,7 +399,7 @@ const finderData = Object.fromEntries(
   .svc:hover .svc-go { transform: rotate(45deg); background: var(--acc); }
   @media (min-width: 48rem) {
     .bento { grid-template-columns: repeat(6, 1fr); }
-    .s2 { grid-column: span 3; } .s3 { grid-column: span 3; } .s4 { grid-column: span 3; }
+    .s2 { grid-column: span 3; } .s3 { grid-column: span 3; } .s4 { grid-column: span 3; } .s6 { grid-column: span 6; }
   }
   @media (min-width: 64rem) {
     .s2 { grid-column: span 2; } .s4 { grid-column: span 4; }
