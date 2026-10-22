@@ -5,6 +5,12 @@
 import '../styles/global.css';
 import Logo from '../components/Logo.astro';
 import { services } from '../data/services';
+
+// Read at build time, so a deploy made before these were set can never sign in.
+const missing = [
+  !import.meta.env.PUBLIC_SUPABASE_URL && 'PUBLIC_SUPABASE_URL',
+  !import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY && 'PUBLIC_SUPABASE_PUBLISHABLE_KEY',
+].filter(Boolean);
 ---
 
 <!doctype html>
@@ -17,6 +23,31 @@ import { services } from '../data/services';
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
+    <!-- Shown instead of a blank page when something stops the admin from starting. -->
+    <main class="login" id="boot-error" hidden={missing.length === 0}>
+      <div class="card login-card">
+        <Logo />
+        <h1 class="h3">The admin couldn’t start</h1>
+        {missing.length > 0
+          ? <p class="muted">This deploy was built without <code>{missing.join(' and ')}</code>. Add {missing.length > 1 ? 'them' : 'it'} in Vercel → Settings → Environment Variables (tick Production), then redeploy.</p>
+          : <p class="muted">Send this message to whoever looks after the site:</p>}
+        <code id="boot-message"></code>
+      </div>
+    </main>
+    <script is:inline>
+      // Any error before sign-in appears, shown on the page rather than hidden in the console.
+      (function () {
+        function fail(msg) {
+          if (!document.getElementById('app').hidden) return;
+          document.getElementById('login').hidden = true;
+          document.getElementById('boot-error').hidden = false;
+          document.getElementById('boot-message').textContent = String(msg);
+        }
+        addEventListener('error', function (e) { fail(e.message || 'A script failed to load'); }, true);
+        addEventListener('unhandledrejection', function (e) { fail((e.reason && e.reason.message) || e.reason); });
+      })();
+    </script>
+
     <!-- Sign in -->
     <main id="login" class="login" hidden>
       <form class="card login-card" id="login-form">
@@ -147,6 +178,7 @@ import { services } from '../data/services';
       /* ---------- Session ---------- */
 
       async function show() {
+        if (!$('#boot-error').hidden) return;
         const { data } = await db.auth.getSession();
         const session = data.session;
         if (session) {
@@ -405,6 +437,8 @@ import { services } from '../data/services';
   .login { min-height: 100dvh; display: grid; place-items: center; padding: 1rem; }
   .login-card { width: min(100%, 26rem); display: grid; gap: 1.1rem; }
   .login-card .btn { justify-self: stretch; }
+  #boot-message { font-size: .875rem; color: var(--warm-700); overflow-wrap: anywhere; }
+  #boot-message:empty { display: none; }
 
   .bar { position: sticky; top: 0; z-index: 10; background: rgba(247, 249, 247, .85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
   .bar-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; }
