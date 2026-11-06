@@ -12,6 +12,12 @@ import breathing from '../assets/photos/woman-breathing.jpg';
 import handsWarm from '../assets/photos/hands-warm.jpg';
 import handsHeld from '../assets/photos/hands-held.jpg';
 
+export interface ServiceSection {
+  heading?: string;
+  paragraphs?: string[];
+  list?: string[];
+}
+
 export interface Service {
   slug: string;
   title: string;
@@ -24,11 +30,13 @@ export interface Service {
   photoAlt: string;
   photo2: ImageMetadata;
   photo2Alt: string;
-  intro: string;
-  listHeading: string;
-  list: string[];
-  aim: string;
-  extras?: { title: string; body: string; icon: 'chat' | 'circle' }[];
+  /** Short list shown on the services index preview. */
+  highlights: string[];
+  /** The main body, in reading order. */
+  sections: ServiceSection[];
+  /** The warm closing statement, rendered as the centred signature. */
+  closing: { heading: string; paragraphs: string[] };
+  related?: { label: string; href: string };
   testimonial?: 'snigdha' | 'maithili';
 }
 
@@ -37,7 +45,7 @@ export const services: Service[] = [
     slug: 'grief-counselling',
     title: 'Grief Counselling',
     short: 'Grief & loss',
-    tagline: 'There’s no right way to grieve, and no deadline.',
+    tagline: "There's no single way to grieve, and no fixed timetable for healing.",
     teaser: 'Room to grieve, at your own pace.',
     // Dusk: quiet sky, a little warmth held in it.
     theme: { a: '#DCE8F4', b: '#F1E4E2', c: '#FBEDE6', accent: '#3E5F7C', ink: '#1B2A3A' },
@@ -45,21 +53,62 @@ export const services: Service[] = [
     photoAlt: 'A single dandelion clock against a soft blue sky',
     photo2: handsWarm,
     photo2Alt: 'Two hands gently holding each other',
-    intro:
-      'Loss can change how we see ourselves, the people around us and the world. Here, you can grieve without pressure to “move on”, at a pace that feels safe.',
-    listHeading: 'Grief can look like',
-    list: [
-      'Losing a parent, partner, child or friend',
-      'A sudden death, or a long illness',
-      'Grief others think you should be “over”',
-      'Grieving someone who is still here, but unwell',
-      'Losses that are hard to name',
+    highlights: [
+      'Sadness, longing or a sense of emptiness',
+      'Anger, guilt, regret or unanswered questions',
+      'Loneliness, even when surrounded by other people',
     ],
-    aim: 'We’ll meet you where you are.',
-    extras: [
-      { icon: 'chat', title: 'Between sessions', body: 'WhatsApp or text support on the heavier days.' },
-      { icon: 'circle', title: 'A free grief circle', body: 'A small group to share, listen and feel less alone.' },
+    sections: [
+      {
+        heading: 'You may find yourself experiencing',
+        list: [
+          'Sadness, longing or a sense of emptiness',
+          'Anger, guilt, regret or unanswered questions',
+          'Difficulty concentrating or engaging with everyday life',
+          'Loneliness, even when surrounded by other people',
+          'A sense that life has changed in ways others may not fully understand',
+          'Grief that returns long after a loss, sometimes when you least expect it',
+        ],
+      },
+      {
+        paragraphs: ['There is no single way to grieve, and there is no fixed timetable for healing.'],
+      },
+      {
+        heading: 'How counselling may help',
+        paragraphs: [
+          "Grief counselling offers a space where you do not have to minimise your loss, explain your feelings away or move forward before you feel ready.",
+          'Together, we may explore the meaning of your loss, the emotions that accompany it and the ways it has affected your sense of self, relationships and everyday life.',
+          'You can choose a session of clinical hypnosis with me to experience a deep meditative state, delve into the unconscious feelings and emotions and how to bring them into awareness.',
+          'Our sessions may include reflection, talking through difficult experiences, narrative approaches or other suitable methods within my training and scope of practice.',
+        ],
+      },
+      {
+        heading: 'An informal grief circle',
+        paragraphs: ['At Samya you have the opportunity to be part of an informal grief circle where:'],
+        list: [
+          'You are welcome to participate in your own way',
+          'You can share your experiences or a memory, if you wish',
+          'You can listen to others without feeling obliged to speak',
+          'There is space for emotions that may be difficult to express elsewhere',
+          'You can recognise that other people may be navigating loss in different ways',
+          'You can take part without any expectation to feel better or reach a particular stage of grief',
+        ],
+      },
+      {
+        paragraphs: [
+          'The intention is not to forget the person or life you have lost. It is to make room for your grief while gradually exploring how you might continue living alongside it.',
+        ],
+      },
     ],
+    closing: {
+      heading: 'You do not have to carry everything alone',
+      paragraphs: [
+        'You are welcome to come as you are, whether your loss is recent or something you have been carrying for years.',
+        'You do not need to know what to say or where to begin. We can start with what feels most difficult today.',
+        'If you would like to explore grief counselling, you are welcome to get in touch.',
+      ],
+    },
+    related: { label: 'About the Grief Circle', href: '/grief-circle' },
     testimonial: 'snigdha',
   },
   {
@@ -74,25 +123,39 @@ export const services: Service[] = [
     photoAlt: 'Children colouring together with bright felt pens',
     photo2: teen,
     photo2Alt: 'A teenager relaxing on a bed with headphones in soft window light',
-    intro:
-      'Growing up brings feelings children can’t always name. Counselling gives them a safe place to understand those feelings and learn healthy ways to cope.',
-    listHeading: 'I help with',
-    list: [
-      'Exam stress and academic pressure',
-      'Bullying and friendship troubles',
-      'Separation, family change or illness at home',
-      'The emotional ups and downs of adolescence',
-      'Clashes over screens, food and routines',
-      'Motivation, focus and routine',
-      'Restlessness and overwhelm',
+    highlights: [
+      'Conversation, reflection and creative activities',
+      'Recognising and communicating feelings',
+      'Skills for emotional wellbeing',
     ],
-    aim: 'Not to change who a child is, but to help them understand who they are.',
+    sections: [
+      {
+        heading: 'How counselling may help',
+        paragraphs: [
+          "Sessions are adapted to the young person's age, needs and comfort level. Depending on what is appropriate, our work may include conversation, reflection, creative activities, narrative approaches and practical emotional-regulation strategies.",
+          'The aim is to help young people recognise and communicate their feelings, understand their responses and build skills that support their emotional wellbeing.',
+        ],
+      },
+      {
+        heading: 'Working with parents and caregivers',
+        paragraphs: [
+          "Parents and caregivers can play an important role in supporting a young person's emotional development. Where appropriate, we may discuss ways to strengthen communication, respond to difficult behaviour and create a more supportive environment at home.",
+          "At the outset, we will discuss consent, parental involvement, confidentiality and safeguarding in an age-appropriate and transparent way. A young person's privacy will be respected within the applicable safety and legal boundaries.",
+        ],
+      },
+    ],
+    closing: {
+      heading: 'Every child deserves to be heard',
+      paragraphs: [
+        "You do not need to wait until a difficulty becomes overwhelming to seek support. If you are concerned about your child's emotional wellbeing, we can explore whether counselling may be appropriate for their needs.",
+      ],
+    },
   },
   {
     slug: 'family-therapy',
     title: 'Family Therapy',
     short: 'Family therapy',
-    tagline: 'Finding new ways to listen, understand and grow together as a family.',
+    tagline: 'Understanding one another, finding new ways forward.',
     teaser: 'Seeing the whole family, not one problem.',
     // Hearth: the warm pole, softened by calm.
     theme: { a: '#FBE3D9', b: '#F6D3C6', c: '#E4F1EB', accent: '#A04A57', ink: '#3E1E24' },
@@ -100,29 +163,54 @@ export const services: Service[] = [
     photoAlt: 'A smiling family sitting close together outdoors',
     photo2: motherDaughter,
     photo2Alt: 'A mother and daughter laughing in a warm hug',
-    intro:
-      'What affects one person affects the whole family. Family therapy helps you see your patterns, hear each other, and find kinder ways to relate.',
-    listHeading: 'I help with',
-    list: [
-      'Difficult transitions and life changes',
-      'Estrangement and emotional distance',
-      'Chronic illness in the family',
-      'Separation, divorce and new family shapes',
-      'A family member’s mental health',
-      'Financial stress and family crises',
-      'Changing roles and living arrangements',
+    highlights: [
+      'Clearer, more respectful communication',
+      'Understanding different needs and perspectives',
+      'Finding ways through difficult conversations',
     ],
-    aim: 'More empathy, clearer communication, healthier boundaries.',
-    extras: [
-      { icon: 'chat', title: 'When a loved one has a diagnosis', body: 'Guidance for families living with depression, anxiety, bipolar disorder or OCD.' },
+    sections: [
+      {
+        heading: 'How family counselling may help',
+        paragraphs: [
+          'Our work may involve exploring how family members communicate, what happens when disagreements arise and how individual experiences influence the wider family dynamic.',
+        ],
+      },
+      {
+        heading: 'Together, we may work towards',
+        list: [
+          'Developing clearer and more respectful communication',
+          'Understanding different needs, emotions and perspectives',
+          'Recognising recurring patterns of conflict',
+          'Exploring boundaries and expectations',
+          'Finding practical ways to navigate difficult conversations',
+        ],
+      },
+      {
+        paragraphs: [
+          'The intention is not to assign blame or decide who is right. It is to understand what is happening between family members and explore possibilities for change.',
+        ],
+      },
+      {
+        heading: 'Who can participate?',
+        paragraphs: [
+          'Depending on the circumstances, family counselling may involve individual family members, parents and children, or several members of the family together. We can discuss the most appropriate format during an initial enquiry.',
+          'We will also clarify the goals of the work, participation arrangements and how confidentiality applies when more than one person is involved.',
+        ],
+      },
     ],
+    closing: {
+      heading: 'Making space for a different conversation',
+      paragraphs: [
+        'Family relationships can be complicated, and meaningful change takes time. Counselling offers an opportunity to pause, listen differently and explore what may help your family move towards greater understanding.',
+      ],
+    },
     testimonial: 'maithili',
   },
   {
     slug: 'relationship-counselling',
     title: 'Relationship Counselling',
     short: 'Relationships',
-    tagline: 'When relationships feel difficult, there is room to begin again.',
+    tagline: 'Understanding the patterns that shape our relationships.',
     teaser: 'Finding a way forward, together.',
     // Rose meets calm: warmth with room to breathe.
     theme: { a: '#F8DCE2', b: '#EAD3E2', c: '#E3F0E9', accent: '#9C4A6E', ink: '#3A2130' },
@@ -130,20 +218,34 @@ export const services: Service[] = [
     photoAlt: 'Two hands clasped together in comfort',
     photo2: calmSea,
     photo2Alt: 'A still, pale sea meeting a soft horizon',
-    intro:
-      'Relationships can hold our deepest belonging and our deepest hurt. A safe, non-judgemental space to understand what is happening and find healthier ways of relating.',
-    listHeading: 'I offer support with',
-    list: [
-      'Navigating break-ups, separation and divorce',
-      'Fertility-related emotional challenges',
-      'Conflict with in-laws and extended family',
-      'Pre-marital counselling and preparing for marriage',
-      'Healing from childhood wounds and unresolved family conflict',
-      'Estrangement or difficult relationships between adult children and parents',
-      'Separation or emotional distance between partners',
-      'Relationships affected by a lack of emotional or physical intimacy',
+    highlights: [
+      'How you respond to conflict',
+      'Emotional patterns and boundaries',
+      'Clarifying your needs and choices',
     ],
-    aim: 'Not always about “fixing” a relationship — sometimes it’s understanding yourself, setting boundaries, and moving forward with clarity.',
+    sections: [
+      {
+        heading: 'How counselling may help',
+        paragraphs: [
+          'Our work may involve exploring how you respond to conflict, how you express your needs and what happens when expectations go unmet.',
+          'We may look at emotional patterns, communication, personal boundaries and the beliefs that influence how you relate to others.',
+          'The aim is not to tell you whether to stay or leave a relationship. It is to help you understand your experiences, clarify your needs and consider the choices available to you.',
+        ],
+      },
+      {
+        heading: 'Individual or joint support',
+        paragraphs: [
+          'You can enquire about individual relationship counselling to explore your own experiences and patterns.',
+          'If joint sessions are offered, their suitability will depend on the circumstances, the goals of the work and the safety of everyone involved. We can discuss this before making a decision about the format.',
+        ],
+      },
+    ],
+    closing: {
+      heading: 'Relationships can be explored with honesty and care',
+      paragraphs: [
+        'You do not have to wait until a relationship reaches a breaking point to seek support. Sometimes, beginning with a clearer understanding of yourself can help you decide what needs attention and what you would like to do next.',
+      ],
+    },
   },
   {
     slug: 'existential-counselling',
@@ -157,17 +259,27 @@ export const services: Service[] = [
     photoAlt: 'A lone figure on a hilltop beneath a night sky',
     photo2: journal,
     photo2Alt: 'Someone writing in a notebook on a bright marble table',
-    intro:
-      'Everything can look fine from the outside while something inside feels empty. This is a space to pause, and gently explore what lies beneath.',
-    listHeading: 'We can explore',
-    list: [
-      'Disconnection, low motivation or lost purpose',
-      'Empty nest, menopause or the end of a relationship',
-      'Losing a career or a business',
-      'Reconnecting with your values',
-      'What a more meaningful life looks like for you',
+    highlights: [
+      'The values that matter to you',
+      'Acknowledging uncertainty',
+      'Choices aligned with your values',
     ],
-    aim: 'Not just coping. Living with more meaning.',
+    sections: [
+      {
+        heading: 'How counselling may help',
+        paragraphs: [
+          'Together, we can explore the values that matter to you, the assumptions that shape your decisions and the possibilities available to you in the present.',
+          'Our conversations may help you understand what feels important, acknowledge uncertainty and make choices that are more aligned with your values.',
+          'Existential counselling does not require you to arrive at a particular philosophy or belief. It makes room for your questions, including those that may not have simple or immediate answers.',
+        ],
+      },
+    ],
+    closing: {
+      heading: 'Finding your own way forward',
+      paragraphs: [
+        'You do not need to be in a crisis to explore questions about meaning or direction. Sometimes, the wish to understand yourself more deeply is reason enough to begin.',
+      ],
+    },
   },
   {
     slug: 'anger-emotional-regulation',
@@ -181,17 +293,40 @@ export const services: Service[] = [
     photoAlt: 'A wave curling over at sunset',
     photo2: calmSea,
     photo2Alt: 'A still, pale sea meeting a soft horizon',
-    intro:
-      'Anger is often hurt, fear or feeling unheard, held in for too long. Rather than suppressing it, we learn what it’s trying to say.',
-    listHeading: 'I help with',
-    list: [
-      'A short temper affecting work or relationships',
-      'Outbursts that feel hard to stop',
-      'Anger that stays bottled up',
-      'Knowing your triggers and patterns',
-      'Responding without hurting yourself or others',
+    highlights: [
+      'Recognising the signs of rising frustration',
+      'Identifying triggers and patterns',
+      'Ways to pause before responding',
     ],
-    aim: 'Not to take anger away, but to respond with choice and calm.',
+    sections: [
+      {
+        heading: 'How counselling may help',
+        paragraphs: [
+          'Together, we can explore the situations that trigger anger, the feelings that may accompany it and the patterns that develop when emotions become difficult to manage.',
+        ],
+      },
+      {
+        heading: 'Depending on your needs, our work may include',
+        list: [
+          'Recognising emotional and physical signs of rising frustration',
+          'Identifying triggers and recurring patterns',
+          'Developing ways to pause before responding',
+          'Exploring communication and boundary-setting',
+          'Practising suitable coping and emotional-regulation strategies',
+        ],
+      },
+      {
+        paragraphs: [
+          'The aim is not to suppress anger or expect you never to feel frustrated. It is to help you understand what you are experiencing and find healthier ways to respond.',
+        ],
+      },
+    ],
+    closing: {
+      heading: 'A different relationship with your emotions',
+      paragraphs: [
+        'You do not have to feel ashamed of having difficult emotions to begin counselling. Understanding them can be an important step towards responding with greater awareness and choice.',
+      ],
+    },
   },
   {
     slug: 'anxiety-stress-counselling',
@@ -205,17 +340,29 @@ export const services: Service[] = [
     photoAlt: 'A woman by a window with her eyes closed, breathing slowly',
     photo2: calmSea,
     photo2Alt: 'A still, pale sea meeting a soft horizon',
-    intro:
-      'Holding too many roles at once can become overwhelming. Together, we slow down, see what’s creating the stress, and find your balance again.',
-    listHeading: 'I help with',
-    list: [
-      'Procrastination and feeling stuck',
-      'Overthinking',
-      'Chronic stress',
-      'Caring for everyone but yourself',
-      'Work–life imbalance',
+    highlights: [
+      'Exploring what contributes to your distress',
+      'Practical ways to cope',
+      'Responding with awareness and care',
     ],
-    aim: 'Not having it all figured out. Just a little more grounded.',
+    sections: [
+      {
+        heading: 'How counselling may help',
+        paragraphs: [
+          'Our work may involve exploring the situations and thought patterns contributing to your distress, recognising emotional responses and identifying practical ways to cope.',
+          'Where appropriate and within my training, this may include cognitive and behavioural strategies, emotional awareness, grounding exercises and approaches to managing everyday stress.',
+          'We can also explore the expectations you place on yourself, the boundaries you may need and the sources of support available to you.',
+          'Counselling is not about expecting yourself to manage everything perfectly. It is about understanding what is happening and finding ways to respond with greater awareness and care.',
+        ],
+      },
+    ],
+    closing: {
+      heading: 'You do not have to work everything out at once',
+      paragraphs: [
+        'You are welcome to begin even if you cannot clearly explain why you feel overwhelmed. We can start with what you have been experiencing and explore what kind of support may be helpful.',
+        'Where symptoms are severe, persistent or require medical assessment, we can also discuss appropriate additional professional support.',
+      ],
+    },
   },
 ];
 

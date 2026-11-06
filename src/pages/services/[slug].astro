@@ -50,58 +50,43 @@ const waText = `Hi ${site.practitioner}, I’d like to book a session for ${s.ti
       </div>
     </section>
 
-    <!-- ================= INTRO ================= -->
-    <section class="section intro">
-      <div class="wrap intro-grid">
-        <p class="intro-big reveal">{s.intro}</p>
-      </div>
-    </section>
-
-    <!-- ================= LIST ================= -->
-    <section class="section-tight list-section">
-      <div class="wrap">
-        <div class="list-card grain">
-          <div class="list-head">
-            <h2 class="h2 reveal">{s.listHeading}</h2>
-          </div>
-          <ul class="items">
-            {s.list.map((item, i) => (
-              <li class="reveal" style={`--d:${i * 50}ms`}>
-                <span class="tick"><Icon name="check" /></span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
+    <!-- ================= BODY ================= -->
+    {s.sections.map((sec) => (
+      <section class:list={['section-tight s-body', { 's-has-list': !!sec.list }]}>
+        <div class="wrap-narrow s-sec">
+          {sec.heading && <h2 class="h2 s-sec-head reveal">{sec.heading}</h2>}
+          {sec.paragraphs?.map((p) => <p class="s-para reveal">{p}</p>)}
+          {sec.list && (
+            <ul class="items reveal">
+              {sec.list.map((item, i) => (
+                <li style={`--d:${i * 50}ms`}>
+                  <span class="tick"><Icon name="check" /></span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      </div>
-    </section>
+      </section>
+    ))}
 
-    <!-- ================= AIM ================= -->
-    <section class="section aim">
-      <div class="wrap-narrow">
-        <span class="aim-orb" aria-hidden="true"></span>
-        <p class="aim-text reveal">{s.aim}</p>
-        <p class="aim-sig reveal">{site.practitioner}</p>
-      </div>
-    </section>
-
-    <!-- ================= EXTRAS ================= -->
-    {s.extras && (
+    {s.related && (
       <section class="section-tight">
-        <div class="wrap extras">
-          {s.extras.map((e, i) => (
-            <article class="extra reveal" style={`--d:${i * 100}ms`}>
-              <span class="extra-icon"><Icon name={e.icon} /></span>
-              <h3 class="h3">{e.title}</h3>
-              <p class="muted">{e.body}</p>
-              {e.icon === 'circle' && s.slug === 'grief-counselling' && (
-                <a href="/grief-circle" class="link-arrow">About the Grief Circle <Icon name="arrow" /></a>
-              )}
-            </article>
-          ))}
+        <div class="wrap-narrow related">
+          <a href={s.related.href} class="link-arrow reveal">{s.related.label} <Icon name="arrow" /></a>
         </div>
       </section>
     )}
+
+    <!-- ================= CLOSING ================= -->
+    <section class="section aim">
+      <div class="wrap-narrow">
+        <span class="aim-orb" aria-hidden="true"></span>
+        <p class="aim-text reveal">{s.closing.heading}</p>
+        {s.closing.paragraphs.map((p) => <p class="aim-para reveal">{p}</p>)}
+        <p class="aim-sig reveal">{site.practitioner}</p>
+      </div>
+    </section>
 
     <!-- ================= TESTIMONIAL ================= -->
     {testimonial && (
@@ -171,52 +156,31 @@ const waText = `Hi ${site.practitioner}, I’d like to book a session for ${s.ti
     .s-visual { justify-self: end; }
   }
 
-  /* ---------- Intro ---------- */
-  .intro-grid { display: grid; max-width: 52rem; }
-  .intro-big { font-family: var(--font-display); font-size: clamp(1.75rem, 3.2vw, 2.75rem); line-height: 1.2; letter-spacing: -.01em; color: var(--ink); }
-  .intro-rest { display: grid; gap: 1.25rem; align-content: end; }
-  
-
-  /* ---------- List ---------- */
-  .list-card {
-    position: relative; overflow: hidden;
-    border-radius: clamp(2rem, 4vw, 3rem);
-    padding: clamp(2rem, 5vw, 4rem);
-    background: linear-gradient(135deg, color-mix(in srgb, var(--a) 55%, white), color-mix(in srgb, var(--b) 45%, white) 55%, color-mix(in srgb, var(--c) 55%, white));
-    display: grid; gap: 2.5rem;
-  }
-  .list-head { display: grid; gap: .75rem; align-content: start; }
-  .list-head .eyebrow { color: var(--acc); }
-  .items { list-style: none; display: grid; gap: .75rem; }
+  /* ---------- Body ---------- */
+  .s-sec { display: grid; gap: 1.25rem; justify-items: start; }
+  .s-sec-head { color: var(--tink); }
+  .s-para { font-size: 1.125rem; line-height: 1.7; color: var(--ink-2); max-width: 40rem; }
+  .items { list-style: none; display: grid; gap: .75rem; width: 100%; margin-top: .25rem; }
   .items li {
     display: flex; gap: 1rem; align-items: flex-start;
     padding: 1.1rem 1.25rem; border-radius: 1.25rem;
-    background: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.95);
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--a) 26%, white);
+    border: 1px solid color-mix(in srgb, var(--a) 20%, white);
     font-weight: 500; line-height: 1.5;
   }
   .tick { flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%; display: grid; place-items: center; background: var(--acc); color: #fff; margin-top: .05rem; }
   .tick :global(svg) { width: 1rem; height: 1rem; }
-  @media (min-width: 60rem) {
-    .list-card { grid-template-columns: .8fr 1.2fr; gap: 4rem; }
-    .list-head { position: sticky; top: 7rem; }
-  }
+  .related { display: grid; justify-items: start; }
+  .related .link-arrow { color: var(--acc); font-weight: 600; }
 
   /* ---------- Aim ---------- */
   .aim { text-align: center; }
   .aim .wrap-narrow { display: grid; justify-items: center; gap: 1.5rem; }
   .aim-orb { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, var(--a) 45%, var(--b)); box-shadow: 0 0 50px 10px color-mix(in srgb, var(--a) 70%, transparent); animation: float 7s var(--ease-breath) infinite; }
   .aim-text { font-family: var(--font-display); font-size: clamp(1.9rem, 4vw, 3.25rem); line-height: 1.15; letter-spacing: -.015em; color: var(--tink); text-wrap: balance; }
+  .aim-para { max-width: 40rem; color: var(--ink-2); font-size: 1.125rem; line-height: 1.7; }
   .aim-sig { font-family: var(--font-display); font-style: italic; font-size: 1.5rem; color: var(--acc); }
   .aim-sig::before { content: '— '; }
-
-  /* ---------- Extras ---------- */
-  .extras { display: grid; gap: 1rem; }
-  .extra { display: grid; gap: .9rem; align-content: start; padding: clamp(1.75rem, 3.5vw, 2.5rem); border-radius: var(--r-card); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-soft); }
-  .extra-icon { width: 3.25rem; height: 3.25rem; border-radius: 1rem; display: grid; place-items: center; background: linear-gradient(135deg, var(--a), var(--b)); color: var(--acc); }
-  .extra-icon :global(svg) { width: 1.5rem; height: 1.5rem; }
-  .extra .link-arrow { color: var(--acc); }
-  @media (min-width: 56rem) { .extras { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); } }
 
   :global(.s-tm) { background: linear-gradient(135deg, color-mix(in srgb, var(--a) 35%, white), color-mix(in srgb, var(--b) 30%, white)) !important; border: 0 !important; }
 

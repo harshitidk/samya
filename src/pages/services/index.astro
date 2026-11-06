@@ -33,7 +33,7 @@ import { site, whatsappHref } from '../../config/site';
             <h2 class="h2 reveal">{s.title}</h2>
             <p class="row-tag reveal">{s.tagline}</p>
             <ul class="row-list reveal">
-              {s.list.slice(0, 3).map((l) => <li><Icon name="check" />{l}</li>)}
+              {s.highlights.map((l) => <li><Icon name="check" />{l}</li>)}
             </ul>
             <div class="row-actions reveal">
               <a href={`/services/${s.slug}`} class="btn btn-primary">Explore {s.short.toLowerCase()} <Icon name="arrow" /></a>

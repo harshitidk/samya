@@ -49,6 +49,17 @@ export const promises = [
   { title: 'Your strengths first', body: 'Tools to stand on your own.', icon: 'spark' },
 ] as const;
 
+/* Why Samya: the full page. */
+export const whySamya = [
+  { title: 'A space to feel heard, understood and supported', body: 'At Samya, counselling is not about telling you how to live your life or offering ready-made answers. It is about making space to understand your experiences, explore what feels difficult and discover possibilities that may not yet feel clear.', icon: 'heart' },
+  { title: 'Care that sees the whole person', body: 'Our emotions are shaped by our experiences, relationships and circumstances. We take time to understand the wider picture rather than looking at a difficulty in isolation.', icon: 'person' },
+  { title: 'Support that respects your pace', body: 'There is no expectation to have everything figured out before you begin. We start with what feels important to you and work together at a pace that feels appropriate.', icon: 'clock' },
+  { title: 'A collaborative approach', body: 'Counselling is a process we explore together. Your experiences, choices, values and strengths remain central to our work.', icon: 'users' },
+  { title: 'Understanding that extends beyond sessions', body: 'Where appropriate, we explore practical ways to respond to difficult emotions, navigate relationships and manage everyday challenges, so that the insights gained in counselling can become useful in daily life.', icon: 'spark' },
+  { title: 'A confidential space, with clear boundaries', body: 'Your privacy matters. We will discuss confidentiality and how your information is handled, including circumstances in which information may need to be shared for safety, safeguarding or legal reasons.', icon: 'shield' },
+  { title: 'Support between sessions', body: 'Sometimes, you may want to clarify a practical question or briefly check in between appointments. The availability and scope of any between-session messaging support will be discussed at the outset, so that expectations and boundaries are clear.', icon: 'chat' },
+] as const;
+
 export const education = [
   { title: 'PG Diploma in Counselling and Family Therapy', where: 'IGNOU' },
   { title: 'Trauma-Informed Psychosocial Care', where: 'Hansraj College, University of Delhi', note: 'Specialisation in grief' },

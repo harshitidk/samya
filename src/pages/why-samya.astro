@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import Aurora from '../components/Aurora.astro';
 import Icon from '../components/Icon.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { promises } from '../data/content';
+import { whySamya } from '../data/content';
 import { site } from '../config/site';
 import sea from '../assets/photos/pastel-sea.jpg';
 
@@ -19,6 +19,8 @@ const cardGrads = [
   ['#FCE8DC', '#FBE3D9'],
   ['#E3EDF6', '#E3F2EC'],
   ['#FBF0D8', '#DDF6EA'],
+  ['#FBE6DC', '#E3EDF6'],
+  ['#DDF6EA', '#FBF0D8'],
 ];
 ---
 
@@ -51,7 +53,7 @@ const cardGrads = [
         <h2 class="h2 reveal">When you choose <em>Samya</em></h2>
       </div>
       <ol class="promises">
-        {promises.map((p, i) => (
+        {whySamya.map((p, i) => (
           <li class="promise reveal" style={`--d:${(i % 2) * 90}ms; --g1:${cardGrads[i][0]}; --g2:${cardGrads[i][1]}`}>
             <span class="pn">{String(i + 1).padStart(2, '0')}</span>
             <span class="picon"><Icon name={p.icon} /></span>
@@ -66,7 +68,7 @@ const cardGrads = [
   <section class="section on-dark closing">
     <Aurora colors={['#2B5C5E', '#3A4A6A', '#24465A', '#2E4E6E', '#1E6E86']} intensity={0.85} />
     <div class="wrap-narrow closing-inner">
-      <p class="closing-text reveal">Not to tell you how to live, but to <em>walk alongside you.</em></p>
+      <p class="closing-text reveal">Thoughtful, respectful support — <em>recognising that each person’s journey is different.</em></p>
     </div>
   </section>
 
@@ -110,9 +112,8 @@ const cardGrads = [
   .picon :global(svg) { width: 1.5rem; height: 1.5rem; }
   .promise .h3, .promise p { position: relative; max-width: 30rem; }
   @media (min-width: 52rem) {
-    .promises { grid-template-columns: repeat(6, 1fr); }
-    .promise { grid-column: span 3; }
-    .promise:nth-child(n+3) { grid-column: span 2; }
+    .promises { grid-template-columns: repeat(2, 1fr); }
+    .promise:first-child { grid-column: 1 / -1; }
   }
 
   .closing { overflow: hidden; isolation: isolate; text-align: center; }
