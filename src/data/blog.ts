@@ -17,21 +17,32 @@ export interface Post {
   published_on: string;
 }
 
-/** All posts, newest first. */
+/** All posts, newest first. If the backend is unreachable (e.g. a paused
+    Supabase project), render an empty list rather than a 500 page. */
 export const getPosts = async (): Promise<Post[]> => {
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*')
-    .order('published_on', { ascending: false })
-    .order('created_at', { ascending: false });
-  if (error) throw new Error(`Could not load posts: ${error.message}`);
-  return data;
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .order('published_on', { ascending: false })
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error('Could not load posts:', err);
+    return [];
+  }
 };
 
 export const getPost = async (slug: string): Promise<Post | null> => {
-  const { data, error } = await supabase.from('posts').select('*').eq('slug', slug).maybeSingle();
-  if (error) throw new Error(`Could not load post: ${error.message}`);
-  return data;
+  try {
+    const { data, error } = await supabase.from('posts').select('*').eq('slug', slug).maybeSingle();
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error('Could not load post:', err);
+    return null;
+  }
 };
 
 export const readMinutes = (p: Post) => Math.max(1, Math.round(p.content.split(/\s+/).length / 220));
